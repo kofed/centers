@@ -26,9 +26,10 @@ private:
 
     vector<Mat> split(const Mat & image);
 
-    vector<vector<Point>> findCounturs(Mat & image);
+    void _findContours(Mat & image, vector<vector<Point> > & contours, vector<Vec4i>  & hierarchy);
 
-    vector<Point> findCentreMass(vector<vector<Point>> counturs);
+    vector<Point> findContoursCenters(vector<vector<Point>> & contours,
+    		vector<Vec4i> & hierarchy);
 
     vector<Point> joinDots(vector<vector<Point>> dots);
 
@@ -38,7 +39,7 @@ private:
 
     void check(Mat & image);
 
-    string genFileName(string folder, int num);
+    void writeImage(string folder, int num, Mat & mat);
 
 public:
     Centers() {}
