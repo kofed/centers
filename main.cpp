@@ -38,7 +38,8 @@ int main(int argc, const char* argv[]) {
 
     	 Centers centers;
     	 try{
-    		 centers.test(path);
+    		 Mat image = loadImageFile(path);
+    		 centers.test(image);
     	 }catch(runtime_error & e){
     		 cout << e.what() << endl;
     	 }

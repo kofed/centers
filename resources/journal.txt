@@ -1,3 +1,4 @@
-1. Why counturs png are fully black. 02
-2. Load ROI
+-1. Why counturs png are fully black. 02
+-2. Load ROI 
 3. test on raspberry
+4. architecture for controller. 28

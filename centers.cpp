@@ -8,6 +8,18 @@
 #include <sstream>
 #include "opencv/cv.h"
 
+Centers::process(VideoCapture & capture){
+	Mat frame;
+
+	for(int frameCount = 0;capture.read(frame); ++frameCount){
+		process(frame);
+
+		stringstream ss;
+		ss << outFrameDir << "/" << frameCount << "/";
+		outFrameDir = ss.str();
+	}
+}
+
 Centers::Centers(){
   	//start = std::chrono::system_clock::now();
 
@@ -16,6 +28,13 @@ Centers::Centers(){
   	cout << "width = "<< width;
   	cout << " height = "<< height;
   	cout << " roi = "<< roi << endl;
+
+
+  	stringstream ss;
+  		ss << get_current_dir_name();
+  		ss << "/out/";
+  		outFrameDir = ss.str();
+  	mkdir(outFrameDir, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
 }
 
 void Centers::loadRoi(){
@@ -34,7 +53,7 @@ void Centers::loadRoi(){
 
 void Centers::writeImage(string folder, int num, Mat & mat){
 	stringstream ss;
-	ss << get_current_dir_name();
+	ss << outDir << "/" << folder;
 	ss << "/out/";
 	ss << folder;
 	mkdir(ss.str().c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
@@ -72,9 +91,9 @@ void Centers::check(Mat & image){
 	}
 }
 
-void Centers::test(String & name){
+void Centers::process(Mat & image){
 	logStart("load");
-	Mat image = loadImageFile(name);
+
 	Mat resized;
 	resize(image,resized,Size(width, height));
 	writeImage("load", 1, resized);

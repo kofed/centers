@@ -18,11 +18,14 @@ using namespace std;
 
 class Centers
 {
+
+private:
+	string outFrameDir;
+
 	int width = 800, height = 600;
 
 	Rect roi;
 
-private:
 	chrono::time_point<std::chrono::system_clock> start;
 	/*
 	 * split image into some Mat filt on intensity
@@ -54,7 +57,12 @@ private:
 
 public:
     Centers();
-    void test(String & name);
+
+    void process(Mat & image);
+
+    void process(video);
+
+    void process(id);
 };
 
 
