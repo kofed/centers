@@ -11,14 +11,19 @@
 #include <vector>
 #include "opencv2/core/mat.hpp"
 #include <opencv2/opencv.hpp>
+#include <chrono>
 
 using namespace cv;
 using namespace std;
 
 class Centers
 {
+	int width = 800, height = 600;
+
+	Rect roi;
 
 private:
+	chrono::time_point<std::chrono::system_clock> start;
 	/*
 	 * split image into some Mat filt on intensity
 	 */
@@ -41,9 +46,14 @@ private:
 
     void writeImage(string folder, int num, Mat & mat);
 
-public:
-    Centers() {}
+    void logStart(const char* method);
 
+    void logFinish(const char* method);
+
+    void loadRoi();
+
+public:
+    Centers();
     void test(String & name);
 };
 

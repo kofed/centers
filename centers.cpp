@@ -1,7 +1,5 @@
 #include "centers.h"
 #include <iostream>
-//#include "opencv2/imgproc.hpp"
-//#include "opencv2/ximgproc.hpp"
 #include "opencv2/imgcodecs.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
 #include <sys/stat.h>
@@ -10,10 +8,34 @@
 #include <sstream>
 #include "opencv/cv.h"
 
+Centers::Centers(){
+  	//start = std::chrono::system_clock::now();
+
+  	loadRoi();
+  	cout << "init Centers with ";
+  	cout << "width = "<< width;
+  	cout << " height = "<< height;
+  	cout << " roi = "<< roi << endl;
+}
+
+void Centers::loadRoi(){
+    ifstream roiFile ("resources/roi.txt");
+    if(roiFile.is_open()){
+    	roiFile >> width;
+    	roiFile >> height;
+    	roiFile >> roi.x;
+    	roiFile >> roi.y;
+    	roiFile >> roi.width;
+    	roiFile >> roi.height;
+    }else{
+    	roi = Rect(0, 0, width, height);
+    }
+}
+
 void Centers::writeImage(string folder, int num, Mat & mat){
 	stringstream ss;
 	ss << get_current_dir_name();
-	ss << "out/";
+	ss << "/out/";
 	ss << folder;
 	mkdir(ss.str().c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
 	ss << "/";
@@ -21,9 +43,23 @@ void Centers::writeImage(string folder, int num, Mat & mat){
 	ss << ".png";
 
 	imwrite(ss.str(), mat);
-	cout << "writeImage " << ss.str() << endl;
 
+
+	cout << " writeImage " << ss.str() << endl;
 }
+
+void Centers::logStart(const char* method){
+	auto end = std::chrono::system_clock::now();
+	chrono::duration<double> diff = end-start;
+	cout << diff.count() << " " <<  method << " started\n";
+}
+
+void Centers::logFinish(const char* method){
+	auto end = std::chrono::system_clock::now();
+	chrono::duration<double> diff = end-start;
+	cout << diff.count() << " " <<  method << " finished\n";
+}
+
 void Centers::showImage(Mat & image){
 	namedWindow("image", WINDOW_AUTOSIZE);
 	imshow("image", image);
@@ -37,62 +73,62 @@ void Centers::check(Mat & image){
 }
 
 void Centers::test(String & name){
-	cout << "loadImageFile started for name="<< name << endl;
+	logStart("load");
 	Mat image = loadImageFile(name);
 	Mat resized;
-	resize(image,resized,Size(800, 600));
+	resize(image,resized,Size(width, height));
 	writeImage("load", 1, resized);
-	cout << "loadImageFile finished" << endl;
+	logFinish("load");
 
-	cout << "split started " << endl;
+	logStart("split");
 	vector<Mat> splitted = split(resized);
 	for(int i = 0; i < splitted.size(); ++i){
 		check(splitted[i]);
 		writeImage("split", i, splitted[i]);
 	}
-	cout << "split finished" << endl;
+	logFinish("split");
 
-	cout << "find contours started" << endl;
+	logStart("find contours");
 	vector<vector<vector<Point> >> contours(splitted.size());
-	vector<vector<Vec4i>> hierarchy(splitted.size());
+	vector<vector<Vec4i>> vHierarchy;
 	for(int i = 0; i < splitted.size(); ++i){
 
-
-		_findContours(splitted[i], contours[i], hierarchy[i]);
+		vector<Vec4i> hierarchy;
+		_findContours(splitted[i], contours[i], hierarchy);
+		vHierarchy.push_back(hierarchy);
 
 		Mat drawing = Mat::zeros( splitted[i].size(), CV_8UC3 );
-		int idx = 0;
-		for( ; idx >= 0; idx = hierarchy[i][idx][0] )
-		{
-			Scalar color = Scalar( rand()&255, rand()&255, rand()&255 );
-			drawContours( drawing, contours[i], idx, color, 2, 8, hierarchy );
-	    }
+		if(hierarchy.size() > 0){
+			int idx = 0;
+			for( ; idx >= 0; idx = hierarchy[idx][0] ){
+				Scalar color = Scalar( rand()&255, rand()&255, rand()&255 );
+				drawContours( drawing, contours[i], idx, color, 2, 8, hierarchy );
+			}
+		}
 	    writeImage("findCounturs", i, drawing);
 	}
-	cout << "find contours done" << endl;
+	logFinish("find contours");;
 
-	cout << "find contour center started" << endl;
-	vector<vector<Point>> centers(contours.size());
+	logStart("find centers");
 	mkdir("out/centers", S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
-	for(int i = 0; i < contours.size(); ++i){
-		centers[i] = findContoursCenters(contours[i], hierarchy[i]);
+	for(int iSplitted = 0; iSplitted < splitted.size(); ++iSplitted){
+		vector<Point> centers = findContoursCenters(contours[iSplitted], vHierarchy[iSplitted]);
 		ofstream centersFile;
 		stringstream centersFileName;
-		centersFileName << "out/centers/centers_" << i << ".txt";
-		centersFile.open(centersFileName.str());
+		centersFileName << "out/centers/" << iSplitted << ".txt";
+		centersFile.open(centersFileName.str().c_str());
 
-		Mat drawing = Mat::zeros( splitted[i].size(), CV_8UC3 );;
-		cvtColor(splitted[i], drawing, COLOR_GRAY2BGR);
+		Mat drawing = Mat::zeros( splitted[iSplitted].size(), CV_8UC3 );;
+		cvtColor(splitted[iSplitted], drawing, COLOR_GRAY2BGR);
 
-		for(auto point : centers[i]){
+		for(auto point : centers){
 			centersFile << point << endl;
 			circle( drawing, point, 4, Scalar(0, 0, 255), -1, 8, 0 );
 		}
 		centersFile.close();
-		writeImage("centers", i, drawing);
+		writeImage("centers", iSplitted, drawing);
 	}
-
-	cout << "find contour center done" << endl;
+	logFinish("find centers");
 
 }
 
@@ -103,7 +139,9 @@ Mat Centers::loadImageFile(String & name){
 	    throw runtime_error("Could not open or find the image\n");
 	}
 
-	return image;
+	Mat cropped(image, roi);
+
+	return cropped;
 }
 
 vector<Mat> Centers::split(const Mat & image){
@@ -147,17 +185,22 @@ void Centers::_findContours(Mat & image,
 
 vector<Point> Centers::findContoursCenters(
 		vector<vector<Point>> & contours, vector<Vec4i> & hierarchy){
+	vector<Point> mc;
+	if(contours.size() == 0 || hierarchy.size() == 0){
+			return mc;
+		}
 		/// Get the moments
 	  vector<Moments> mu;
 
 	  for(int idx = 0 ; idx >= 0; idx = hierarchy[idx][0] ){
 		  mu.push_back(moments( contours[idx], false ));
+
 	  }
 
 	  ///  Get the mass centers:
-	  vector<Point> mc( mu.size() );
-	  for( int i = 0; i < contours.size(); i++ )
-	     { mc[i] = Point2f( mu[i].m10/mu[i].m00 , mu[i].m01/mu[i].m00 ); }
+	  mc.resize(mu.size());
+	  for( int i = 0; i < mu.size(); i++ )
+	     {   mc[i] = Point2f( mu[i].m10/mu[i].m00 , mu[i].m01/mu[i].m00 );}
 
 	  return mc;
 }
