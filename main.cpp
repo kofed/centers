@@ -31,23 +31,30 @@ int main(int argc, const char* argv[]) {
     }
 
 
-
-    String path = parser.get<String>(std::string("i"));
-    if(!path.empty()){
-    	 path = parser.get<String>("i");
-
-    	 Centers centers;
+    Centers centers;
+    String imagePath = parser.get<String>(std::string("i"));
+    if(!imagePath.empty()){
     	 try{
-    		 Mat image = loadImageFile(path);
-    		 centers.test(image);
+    		 Mat image = imread(imagePath, IMREAD_GRAYSCALE);
+    		 centers.process(image);
     	 }catch(runtime_error & e){
     		 cout << e.what() << endl;
     	 }
     	 return EXIT_SUCCESS;
     }
 
-    path = parser.get<String>(std::string("i"));
-    if(!path.empty()){
+    String videoPath = parser.get<String>(std::string("v"));
+    if(!videoPath.empty()){
+    	try{
+    		VideoCapture capture(videoPath);
+    		if(!capture.isOpened()){
+    			cout << "Unable to open VideoCapture\n";
+    			return -1;
+    		}
+    		centers.process(capture);
+    	}catch(runtime_error & e){
+    		cout << "ERROR! "<< e.what() << endl;
+    	}
     	return EXIT_SUCCESS;
     }
 

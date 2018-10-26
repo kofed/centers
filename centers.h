@@ -41,7 +41,7 @@ private:
 
     vector<Point> joinDots(vector<vector<Point>> dots);
 
-    void drawCircle(Mat image, vector<Point> dots);
+    //void drawCircle(Mat image, vector<Point> dots);
 
     void showImage(Mat & image);
 
@@ -55,14 +55,15 @@ private:
 
     void loadRoi();
 
+    void drawCircles(vector<vector<Point> > & contours, int iSplitted);
+
 public:
     Centers();
 
     void process(Mat & image);
 
-    void process(video);
+    void process(VideoCapture & capture);
 
-    void process(id);
 };
 
 

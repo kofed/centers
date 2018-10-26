@@ -8,20 +8,20 @@
 #include <sstream>
 #include "opencv/cv.h"
 
-Centers::process(VideoCapture & capture){
+void Centers::process(VideoCapture & capture){
 	Mat frame;
 
 	for(int frameCount = 0;capture.read(frame); ++frameCount){
-		process(frame);
-
 		stringstream ss;
-		ss << outFrameDir << "/" << frameCount << "/";
+		ss << get_current_dir_name() << "/out/" << frameCount << "/";
 		outFrameDir = ss.str();
+		mkdir(outFrameDir.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+		process(frame);
 	}
 }
 
 Centers::Centers(){
-  	//start = std::chrono::system_clock::now();
+  	start = std::chrono::system_clock::now();
 
   	loadRoi();
   	cout << "init Centers with ";
@@ -34,7 +34,7 @@ Centers::Centers(){
   		ss << get_current_dir_name();
   		ss << "/out/";
   		outFrameDir = ss.str();
-  	mkdir(outFrameDir, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+  	mkdir(outFrameDir.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
 }
 
 void Centers::loadRoi(){
@@ -53,9 +53,7 @@ void Centers::loadRoi(){
 
 void Centers::writeImage(string folder, int num, Mat & mat){
 	stringstream ss;
-	ss << outDir << "/" << folder;
-	ss << "/out/";
-	ss << folder;
+	ss << outFrameDir << "/" << folder;
 	mkdir(ss.str().c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
 	ss << "/";
 	ss << num;
@@ -93,14 +91,18 @@ void Centers::check(Mat & image){
 
 void Centers::process(Mat & image){
 	logStart("load");
+	writeImage("load", 1, image);
 
 	Mat resized;
 	resize(image,resized,Size(width, height));
-	writeImage("load", 1, resized);
+
+	Mat cropped(resized, roi);
+
+	writeImage("cropped", 1, cropped);
 	logFinish("load");
 
 	logStart("split");
-	vector<Mat> splitted = split(resized);
+	vector<Mat> splitted = split(cropped);
 	for(int i = 0; i < splitted.size(); ++i){
 		check(splitted[i]);
 		writeImage("split", i, splitted[i]);
@@ -149,18 +151,14 @@ void Centers::process(Mat & image){
 	}
 	logFinish("find centers");
 
-}
-
-Mat Centers::loadImageFile(String & name){
-	Mat image = imread(name, IMREAD_GRAYSCALE);
-
-	if(! image.data ){
-	    throw runtime_error("Could not open or find the image\n");
+	logStart("draw circles");
+	mkdir("out/circles", S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+	for(int iSplitted; iSplitted < splitted.size(); ++iSplitted){
+		drawCircles(contours[iSplitted], iSplitted);
 	}
 
-	Mat cropped(image, roi);
+	logFinish("draw circles");
 
-	return cropped;
 }
 
 vector<Mat> Centers::split(const Mat & image){
@@ -222,4 +220,15 @@ vector<Point> Centers::findContoursCenters(
 	     {   mc[i] = Point2f( mu[i].m10/mu[i].m00 , mu[i].m01/mu[i].m00 );}
 
 	  return mc;
+}
+
+void Centers::drawCircles(vector<vector<Point> > & contours, int iSplitted){
+	Point2f center;
+	float radius;
+	Mat drawing;
+	for(auto contour : contours){
+		minEnclosingCircle( (Mat)contour, center, radius );
+		circle( drawing, center, radius, Scalar(255, 0, 0), 2, 8, 0 );
+		writeImage("centers", iSplitted, drawing);
+	}
 }
