@@ -34,14 +34,10 @@ private:
 
     vector<Mat> split(const Mat & image);
 
-    void _findContours(Mat & image, vector<vector<Point> > & contours, vector<Vec4i>  & hierarchy);
-
     vector<Point> findContoursCenters(vector<vector<Point>> & contours,
     		vector<Vec4i> & hierarchy);
 
     vector<Point> joinDots(vector<vector<Point>> dots);
-
-    //void drawCircle(Mat image, vector<Point> dots);
 
     void showImage(Mat & image);
 
@@ -55,7 +51,7 @@ private:
 
     void loadRoi();
 
-    void drawCircles(vector<vector<Point> > & contours, int iSplitted);
+    void drawCircles(Mat & background, vector<vector<Point> > & contours, int iSplitted);
 
 public:
     Centers();
