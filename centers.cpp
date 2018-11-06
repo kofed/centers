@@ -131,7 +131,7 @@ void Centers::process(Mat & image){
 
 		ofstream centersFile;
 		stringstream centersFileName;
-		centersFileName << "out/centers/" << iSplitted << ".txt";
+		centersFileName << outFrameDir << "/centers/" << iSplitted << ".txt";
 		centersFile.open(centersFileName.str().c_str());
 
 		Mat drawing = Mat::zeros( splitted[iSplitted].size(), CV_8UC3 );
