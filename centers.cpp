@@ -20,7 +20,7 @@ void Centers::process(VideoCapture & capture){
 	}
 }
 
-Centers::Centers(){
+Centers::Centers(bool _debug):debug(_debug){
   	start = std::chrono::system_clock::now();
 
   	loadRoi();
@@ -52,6 +52,9 @@ void Centers::loadRoi(){
 }
 
 void Centers::writeImage(string folder, int num, Mat & mat){
+	if(debug != true){
+		return;
+	}
 	stringstream ss;
 	ss << outFrameDir << "/" << folder;
 	mkdir(ss.str().c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
@@ -153,6 +156,19 @@ void Centers::process(Mat & image){
 	}
 
 	logFinish("draw circles");*/
+
+	logStart("dots number");
+	ofstream dotsFile;
+	dotsFile.open(outFrameDir + "/dots.txt");
+	int totalSplittedDots = 0;
+	for(int iSplitted = 0; iSplitted < splitted.size(); ++iSplitted){
+		int dotsNumber = contours[iSplitted].getDotCount();
+		dotsFile << "splitted " << iSplitted << " " << dotsNumber << endl;
+		totalSplittedDots = totalSplittedDots +  dotsNumber;
+	}
+	dotsFile << "Total: " << totalSplittedDots;
+	dotsFile.close();
+	logFinish("dots number");
 
 }
 

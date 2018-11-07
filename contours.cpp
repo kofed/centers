@@ -38,3 +38,10 @@ vector<vector<Point>> & Contours::toVectors(){
 	return vContours;
 }
 
+int Contours::getDotCount(){
+	int count = 0;
+	for(auto c : contours){
+		count += c.size();
+	}
+	return count;
+}

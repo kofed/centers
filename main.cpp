@@ -21,7 +21,9 @@ int main(int argc, const char* argv[]) {
 
 	const char* keys = "{help h usage ? |      | print this message   }"
 				  "{i        |   |image to process     }"
-				  "{v        |   |video to process     }";
+				  "{v        |   |video to process     }"
+				 "{d         |   | debug}";
+
 
     CommandLineParser parser(argc, argv, keys);
     if (!parser.get<String>(std::string("help")).empty())
@@ -30,8 +32,9 @@ int main(int argc, const char* argv[]) {
         return 0;
     }
 
+    bool debug = parser.has("d");
 
-    Centers centers;
+    Centers centers(debug);
     String imagePath = parser.get<String>(std::string("i"));
     if(!imagePath.empty()){
     	 try{

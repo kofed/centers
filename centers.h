@@ -20,6 +20,8 @@ class Centers
 {
 
 private:
+	const bool debug;
+
 	string outFrameDir;
 
 	int width = 800, height = 600;
@@ -54,7 +56,7 @@ private:
     void drawCircles(Mat & background, vector<vector<Point> > & contours, int iSplitted);
 
 public:
-    Centers();
+    Centers(bool debug);
 
     void process(Mat & image);
 

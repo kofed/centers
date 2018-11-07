@@ -24,4 +24,6 @@ public:
 	vector<Contour> & getAll();
 
 	vector<vector<Point>> & toVectors();
+
+	int getDotCount();
 };
