@@ -23,9 +23,13 @@ void Centers::process(VideoCapture & capture){
 		process(frame);
 	}
 
-		cout << "Video was processed in " << processTime.count() << endl;
-		cout << "Was processed frames: " <<  frameCount << endl;
-		cout << "Time per frame: " << processTime.count() / frameCount << endl;
+	auto processTime = durations["split"] + durations["contours"] + durations["centers"];
+	cout << "Video was processed in " << processTime.count() << endl;
+	cout << "Was processed frames: " <<  frameCount << endl;
+	cout << "Time per frame: " << processTime.count() / frameCount << endl;
+
+	cout << "Split time: " << durations["split"].count() << endl;
+	cout << "Contours time: " << durations["contours"].count() << endl;
 }
 
 Centers::Centers(bool _debug):debug(_debug){
@@ -77,18 +81,19 @@ void Centers::writeImage(string folder, int num, Mat & mat){
 }
 
 void Centers::logStart(const char* method){
+	start = system_clock::now();
 	if(debug){
-		auto end = std::chrono::system_clock::now();
-		chrono::duration<double> diff = end-start;
-		cout << diff.count() << " " <<  method << " started\n";
+		cout << method << " started\n";
 	}
 }
 
 void Centers::logFinish(const char* method){
+	auto end = std::chrono::system_clock::now();
+	duration<double> diff = end-start;
+	durations[method] += diff;
 	if(debug){
-		auto end = std::chrono::system_clock::now();
-		chrono::duration<double> diff = end-start;
-		cout << diff.count() << " " <<  method << " finished\n";
+
+		cout << method << " finished\n";
 	}
 }
 
@@ -133,18 +138,18 @@ void Centers::process(Mat & image){
 	}
 	logFinish("split");
 
-	logStart("find contours");
+	logStart("contours");
 	vector<Contours> contours;
 	//vector<vector<Vec4i>> vHierarchy;
 	for(int i = 0; i < splitted.size(); ++i){
 		contours.push_back(Contours(splitted[i]));
 		Mat drawing = Mat::zeros( splitted[i].size(), CV_8UC3 );
 		contours[i].draw(drawing);
-	    writeImage("findCounturs", i, drawing);
+	    writeImage("findContours", i, drawing);
 	}
-	logFinish("find contours");;
+	logFinish("contours");;
 
-	logStart("find centers");
+	logStart("centers");
 	mkdir("out/centers", S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
 	for(int iSplitted = 0; iSplitted < splitted.size(); ++iSplitted){
 
@@ -153,17 +158,21 @@ void Centers::process(Mat & image){
 		centersFileName << outFrameDir << "/centers/" << iSplitted << ".txt";
 		centersFile.open(centersFileName.str().c_str());
 
-		Mat drawing = Mat::zeros( splitted[iSplitted].size(), CV_8UC3 );
-		cvtColor(splitted[iSplitted], drawing, COLOR_GRAY2BGR);
+		if(debug){
+			Mat drawing = Mat::zeros( splitted[iSplitted].size(), CV_8UC3 );
+			cvtColor(splitted[iSplitted], drawing, COLOR_GRAY2BGR);
+			for(Contour contour : contours[iSplitted].getAll()){
+				circle( drawing, contour.getCenter(), 4, Scalar(0, 0, 255), -1, 8, 0 );
+			}
+			writeImage("centers", iSplitted, drawing);
+		}
 
 		for(Contour contour : contours[iSplitted].getAll()){
 			centersFile << contour.getCenter() << " " << contour.size() << endl;
-			circle( drawing, contour.getCenter(), 4, Scalar(0, 0, 255), -1, 8, 0 );
 		}
 		centersFile.close();
-		writeImage("centers", iSplitted, drawing);
 	}
-	logFinish("find centers");
+	logFinish("centers");
 
 	/*logStart("draw circles");
 	mkdir("out/circles", S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
@@ -185,10 +194,6 @@ void Centers::process(Mat & image){
 	dotsFile << "Total: " << totalSplittedDots;
 	dotsFile.close();
 	logFinish("dots number");
-
-
-	chrono::duration<double> durationImage = chrono::system_clock::now()-startImage;
-	processTime += durationImage;
 }
 
 vector<Mat> Centers::split(const Mat & image){

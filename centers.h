@@ -14,13 +14,13 @@
 
 using namespace cv;
 using namespace std;
+using namespace chrono;
 
 class Centers
 {
 
 private:
-	chrono::duration<double> processTime;
-
+	map<const char*, duration<double>> durations;
 
 	const bool debug;
 
