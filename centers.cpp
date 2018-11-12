@@ -1,27 +1,35 @@
 #include "centers.h"
 #include <iostream>
-#include "opencv2/imgcodecs.hpp"
+#include "opencv2/opencv.hpp"
+#include <fstream>
 #include <sys/stat.h>
 #include <unistd.h>
 #include <string>
 #include <sstream>
-#include "opencv/cv.h"
+//#include "opencv/cv.h"
 #include "contours.h"
 
 void Centers::process(VideoCapture & capture){
 	Mat frame;
+	int frameCount;
 
-	for(int frameCount = 0;capture.read(frame); ++frameCount){
-		stringstream ss;
-		ss << get_current_dir_name() << "/out/" << frameCount << "/";
-		outFrameDir = ss.str();
-		mkdir(outFrameDir.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+	for(frameCount = 0;capture.read(frame); ++frameCount){
+		if(debug){
+			stringstream ss;
+			ss << get_current_dir_name() << "/out/" << frameCount << "/";
+			outFrameDir = ss.str();
+			mkdir(outFrameDir.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+		}
 		process(frame);
 	}
+
+		cout << "Video was processed in " << processTime.count() << endl;
+		cout << "Was processed frames: " <<  frameCount << endl;
+		cout << "Time per frame: " << processTime.count() / frameCount << endl;
 }
 
 Centers::Centers(bool _debug):debug(_debug){
-  	start = std::chrono::system_clock::now();
+
 
   	loadRoi();
   	cout << "init Centers with ";
@@ -69,15 +77,19 @@ void Centers::writeImage(string folder, int num, Mat & mat){
 }
 
 void Centers::logStart(const char* method){
-	auto end = std::chrono::system_clock::now();
-	chrono::duration<double> diff = end-start;
-	cout << diff.count() << " " <<  method << " started\n";
+	if(debug){
+		auto end = std::chrono::system_clock::now();
+		chrono::duration<double> diff = end-start;
+		cout << diff.count() << " " <<  method << " started\n";
+	}
 }
 
 void Centers::logFinish(const char* method){
-	auto end = std::chrono::system_clock::now();
-	chrono::duration<double> diff = end-start;
-	cout << diff.count() << " " <<  method << " finished\n";
+	if(debug){
+		auto end = std::chrono::system_clock::now();
+		chrono::duration<double> diff = end-start;
+		cout << diff.count() << " " <<  method << " finished\n";
+	}
 }
 
 void Centers::showImage(Mat & image){
@@ -101,10 +113,14 @@ void Centers::process(Mat & image){
 		cv::cvtColor(image, image, CV_BGR2GRAY);
 	}
 
-	Mat resized;
-	resize(image,resized,Size(width, height));
+//	Mat resized;
+//	resize(image,resized,Size(width, height));
 
-	Mat cropped(resized, roi);
+
+	auto startImage = std::chrono::system_clock::now();
+	cout << "size " << image.size() << endl;
+
+	Mat cropped(image, roi);
 
 	writeImage("cropped", 1, cropped);
 	logFinish("load");
@@ -170,6 +186,9 @@ void Centers::process(Mat & image){
 	dotsFile.close();
 	logFinish("dots number");
 
+
+	chrono::duration<double> durationImage = chrono::system_clock::now()-startImage;
+	processTime += durationImage;
 }
 
 vector<Mat> Centers::split(const Mat & image){

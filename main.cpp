@@ -28,14 +28,14 @@ int main(int argc, const char* argv[]) {
     CommandLineParser parser(argc, argv, keys);
     if (!parser.get<String>(std::string("help")).empty())
     {
-        parser.printMessage();
+        parser.printParams();
         return 0;
     }
 
-    bool debug = parser.has("d");
+    bool debug = false; //  parser.has("d");
 
     Centers centers(debug);
-    String imagePath = parser.get<String>(std::string("i"));
+/*    String imagePath = parser.get<String>(std::string("i"));
     if(!imagePath.empty()){
     	 try{
     		 Mat image = imread(imagePath, IMREAD_GRAYSCALE);
@@ -45,7 +45,7 @@ int main(int argc, const char* argv[]) {
     	 }
     	 return EXIT_SUCCESS;
     }
-
+*/
     String videoPath = parser.get<String>(std::string("v"));
     if(!videoPath.empty()){
     	try{
@@ -61,6 +61,6 @@ int main(int argc, const char* argv[]) {
     	return EXIT_SUCCESS;
     }
 
-    parser.printMessage();
+    parser.printParams();
     return 1;
 }

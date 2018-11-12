@@ -9,7 +9,6 @@
 #define CENTERS_H_
 
 #include <vector>
-#include "opencv2/core/mat.hpp"
 #include <opencv2/opencv.hpp>
 #include <chrono>
 
@@ -20,11 +19,14 @@ class Centers
 {
 
 private:
+	chrono::duration<double> processTime;
+
+
 	const bool debug;
 
 	string outFrameDir;
 
-	int width = 800, height = 600;
+	int width = 300, height = 200;
 
 	Rect roi;
 
