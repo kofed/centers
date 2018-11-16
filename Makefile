@@ -1,6 +1,6 @@
 CC = g++
 CFLAGS = -g -Wall -std=c++17
-SRCS = main.cpp centers.cpp contours.cpp contour.cpp
+SRCS = main.cpp fframe.cpp contours.cpp contour.cpp
 PROG = centers
 
 OPENCV = `pkg-config opencv --cflags --libs`

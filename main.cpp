@@ -11,7 +11,7 @@
 #include "opencv2/core/core.hpp"
 #include <string>
 #include <iostream>
-#include "centers.h"
+#include "fframe.h"
 
 
 using namespace cv;
@@ -34,7 +34,7 @@ int main(int argc, const char* argv[]) {
 
     bool debug = false; //  parser.has("d");
 
-    Centers centers(debug);
+    Processor processor(debug);
 /*    String imagePath = parser.get<String>(std::string("i"));
     if(!imagePath.empty()){
     	 try{
@@ -54,7 +54,8 @@ int main(int argc, const char* argv[]) {
     			cout << "Unable to open VideoCapture\n";
     			return -1;
     		}
-    		centers.process(capture);
+
+    		processor.process(capture);
     	}catch(runtime_error & e){
     		cout << "ERROR! "<< e.what() << endl;
     	}
