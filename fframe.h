@@ -11,37 +11,33 @@
 #include <vector>
 #include <opencv2/opencv.hpp>
 #include <chrono>
+#include "log.h"
+#include "contours.h"
 
 using namespace cv;
 using namespace std;
 using namespace chrono;
 
-class Centers
+class FFrame
 {
+	
 private:
 	Log & log;
 	
-	const bool debug;
+	Mat image;
 
-	string outFrameDir;
-
-    vector<Mat> split(const Mat & image);
-
-    vector<Point> findContoursCenters(vector<vector<Point>> & contours,
-    		vector<Vec4i> & hierarchy);
+	vector<Mat> split(const Mat & image);
 
     vector<Point> joinDots(vector<vector<Point>> dots);
 
-    void check(Mat & image);    
+    void check();    
 
     void drawCircles(Mat & background, vector<vector<Point> > & contours, int iSplitted);
 
 public:
-    Centers(bool debug);
+    FFrame(Mat & _image, Log & _log);
 
-    void process(Mat & image);
-
-    void process(VideoCapture & capture);
+    Contours findContours();    
 
 };
 

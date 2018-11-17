@@ -1,4 +1,13 @@
 #include "log.h"
+#include <sstream>
+
+Log::Log(bool & _debug):debug(_debug){
+	stringstream ss;
+	  		ss << get_current_dir_name();
+	  		ss << "/out/";
+	  		outFrameDir = ss.str();
+	  	mkdir(outFrameDir.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+}
 
 void Log::logStart(const char* method){
 	start = system_clock::now();

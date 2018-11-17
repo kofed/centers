@@ -1,10 +1,11 @@
 #include "processor.h"
+#include <iostream>
 
 Processor::Processor(bool & _debug):debug(_debug){
 	loadRoi();
 }
 
-void Processor::process(VideoCapture & capture){
+void Processor::process(const VideoCapture & capture){
 	
 	Mat frame;
     int frameCount;
@@ -19,7 +20,7 @@ void Processor::process(VideoCapture & capture){
     	centers.process(frame);
     }
 
-    auto processTime = durations["split"] + durations["contours"] + durations["centers"];
+    auto processTime = log.getDuration("split") + log.getDuration("contours") + log.getDuration("centers");
     cout << "Video was processed in " << processTime.count() << endl;
     cout << "Was processed frames: " <<  frameCount << endl;
     cout << "Time per frame: " << processTime.count() / frameCount << endl;
@@ -39,8 +40,8 @@ void Processor::process(const Mat & image){
 
 		Mat cropped(image, roi);
 
-		writeImage("cropped", 1, cropped);
-		logFinish("load");
+		log.writeImage("cropped", 1, cropped);
+		log.logFinish("load");
 }
 
 void Processor::loadRoi(){

@@ -45,3 +45,24 @@ int Contours::getDotCount(){
 	}
 	return count;
 }
+
+vector<Point> writeCentersToFile(const char* fileName){
+	ofstream centersFile;
+
+	centersFileName << outFrameDir << "/centers/" << iSplitted << ".txt";
+	centersFile.open(fileName);
+
+	if(log.debug){
+		Mat drawing = Mat::zeros( splitted[iSplitted].size(), CV_8UC3 );
+		cvtColor(splitted[iSplitted], drawing, COLOR_GRAY2BGR);
+		for(Contour contour : contours[iSplitted].getAll()){
+			circle( drawing, contour.getCenter(), 4, Scalar(0, 0, 255), -1, 8, 0 );
+		}
+		log.writeImage("centers", iSplitted, drawing);
+	}
+
+	for(Contour contour : contours[iSplitted].getAll()){
+		centersFile << contour.getCenter() << " " << contour.size() << endl;
+	}
+	centersFile.close();
+}

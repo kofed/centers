@@ -11,7 +11,7 @@ private:
 
 	vector<Point> centers;
 
-	vector<vector<Point>> vContours;
+	//vector<vector<Point>> vContours;
 
 	vector<Point> getCenters();
 public:
@@ -23,7 +23,9 @@ public:
 
 	vector<Contour> & getAll();
 
-	vector<vector<Point>> & toVectors();
+	//vector<vector<Point>> & toVectors();
 
 	int getDotCount();
+
+	void writeCentersToFile(const char* file);
 };

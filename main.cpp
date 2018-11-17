@@ -12,7 +12,7 @@
 #include <string>
 #include <iostream>
 #include "fframe.h"
-
+#include "processor.h"
 
 using namespace cv;
 using namespace std;
