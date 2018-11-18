@@ -1,3 +1,6 @@
+#ifndef CONTOURS_H
+#define CONTOURS_H
+
 #include <vector>
 #include "contour.h"
 
@@ -5,17 +8,23 @@ using namespace std;
 
 class Contours{
 private:
+	Mat image;
+
 	vector<Contour> contours;
 
 	vector<Vec4i> hierarchy;
 
 	vector<Point> centers;
 
-	//vector<vector<Point>> vContours;
+	vector<vector<Point>> vContours;
 
 	vector<Point> getCenters();
+
+	const int minIntencity;
+
+	const int maxIntencity;
 public:
-	Contours(const Mat & image);
+	Contours(const Mat & image, int _minIntencity, int _maxIntencity);
 
 	void draw(Mat & drawing);
 
@@ -23,9 +32,10 @@ public:
 
 	vector<Contour> & getAll();
 
-	//vector<vector<Point>> & toVectors();
+	vector<vector<Point>> & toVectors();
 
 	int getDotCount();
 
-	void writeCentersToFile(const char* file);
+	void writeCentersToFile();
 };
+#endif

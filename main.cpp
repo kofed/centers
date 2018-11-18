@@ -32,9 +32,10 @@ int main(int argc, const char* argv[]) {
         return 0;
     }
 
-    bool debug = false; //  parser.has("d");
+    Log log;
+    Log::LOG.debug = false; //  parser.has("d");
 
-    Processor processor(debug);
+    Processor processor;
 /*    String imagePath = parser.get<String>(std::string("i"));
     if(!imagePath.empty()){
     	 try{

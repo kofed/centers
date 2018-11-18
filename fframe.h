@@ -22,22 +22,18 @@ class FFrame
 {
 	
 private:
-	Log & log;
-	
 	Mat image;
-
-	vector<Mat> split(const Mat & image);
 
     vector<Point> joinDots(vector<vector<Point>> dots);
 
-    void check();    
+    void check(const Mat & image);    
 
     void drawCircles(Mat & background, vector<vector<Point> > & contours, int iSplitted);
 
 public:
-    FFrame(Mat & _image, Log & _log);
+    FFrame(Mat & _image);
 
-    Contours findContours();    
+    vector<Contours>  findContours();    
 
 };
 

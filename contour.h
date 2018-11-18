@@ -1,3 +1,6 @@
+#ifndef CONTOUR_H
+#define CONTOUR_H
+
 #include <opencv2/opencv.hpp>
 #include <vector>
 
@@ -22,3 +25,4 @@ public:
 	void drawCenter(Mat * drawing);
 
 };
+#endif
