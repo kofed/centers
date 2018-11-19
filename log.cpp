@@ -1,23 +1,27 @@
-#include "log.h"
+#include "log_k.h"
 #include <sstream>
 #include <sys/stat.h>
 #include <unistd.h>
 
+Log* Log::LOG = new Log();
+
 Log::Log(){
-	LOG = *this;
+	folders = vector<string>(4);
 	
 	stringstream ss;
 	  		ss << get_current_dir_name();
+	  		ss << "/";
 	  		ss << LOG_DEFAULT_ROOT;
 	  		
-	folders[0] = ss.str().c_str();
+	folders[0] = ss.str();
 	buildLogFolder();
 }
 
 void Log::logStart(int level, const char* method){
 	methodStart = system_clock::now();
+	
+	setFolder(level, method);
 	if(debug){
-		setFolder(level, method);
 		cout << method << " started\n";
 	}
 }
@@ -25,11 +29,27 @@ void Log::logStart(int level, const char* method){
 void Log::logFinish(int level,const char* method){
 	auto end = std::chrono::system_clock::now();
 	duration<double> diff = end-methodStart;
-	durations[method] += diff;
-	if(debug){
+	durations[string(method)] += diff;
+	
 		setFolder(level, "");
+	if(debug){
 		cout << method << " finished\n";
 	}
+}
+
+void Log::writeImage(const char* name, Mat & mat){
+	if(!debug){
+			return;
+		}
+		stringstream ss;
+		ss << logFolder;	
+		ss << "/";
+		ss << name;
+		ss << ".png";
+
+		imwrite(ss.str(), mat);
+
+		cout << " writeImage " << ss.str() << endl;
 }
 
 void Log::writeImage(int name, Mat & mat){
@@ -62,13 +82,13 @@ void Log::setFolder(int level, int name){
 
 void Log::setFolder(int level, const char* name){
 	folders[level] = name;
+	if(level > 1)
+		return;
 	buildLogFolder();
 }
 
 void Log::buildLogFolder(){
-	if(!debug)
-		return;
-	
+
 	stringstream ss;
 	for(auto folder : folders){
 		ss << "/" << folder << "/";
@@ -80,17 +100,25 @@ void Log::buildLogFolder(){
 ofstream* Log::openTxt(int name){
 	stringstream ss;
 	ss << name;
-	return openTxt(name);
+	return openTxt(ss.str().c_str());
 }
 
 ofstream* Log::openTxt(const char * name){
 	stringstream ss;
-	ss << logFolder << name << ".txt";
-	
+	if(!debug){
+		ss << logFolder << name << ".txt";
+	}else{
+		ss << logFolder << "/" << folders[2] << "-" << name << ".txt";
+	}
+
 	ofstream* txtFile = new ofstream(ss.str());
 	return txtFile;
 }
 
 void Log::closeTxt(ofstream* file){
 	file->close();
+}
+
+duration<double> & Log::getDuration(const char* method){
+	return durations[method];
 }

@@ -3,6 +3,7 @@
 
 #include "opencv2/opencv.hpp"
 #include "fframe.h"
+#include "log_k.h"
 
 using namespace cv;
 using namespace std;

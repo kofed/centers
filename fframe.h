@@ -11,7 +11,7 @@
 #include <vector>
 #include <opencv2/opencv.hpp>
 #include <chrono>
-#include "log.h"
+#include "log_k.h"
 #include "contours.h"
 
 using namespace cv;

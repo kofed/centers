@@ -32,8 +32,7 @@ int main(int argc, const char* argv[]) {
         return 0;
     }
 
-    Log log;
-    Log::LOG.debug = false; //  parser.has("d");
+    Log::LOG->debug = false; //  parser.has("d");
 
     Processor processor;
 /*    String imagePath = parser.get<String>(std::string("i"));

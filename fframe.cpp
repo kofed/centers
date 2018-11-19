@@ -21,7 +21,7 @@ void FFrame::check(const Mat & image){
 vector<Contours> FFrame::findContours(){	
 
 	
-	Log::LOG.logStart(2, "split");
+	Log::LOG->logStart(2, "split");
 		int SPLIT_NUMBER = 10;
 		int MAX_INTENCITY = 256;
 		double INTENCITY_STEP = (double) MAX_INTENCITY/SPLIT_NUMBER;
@@ -38,7 +38,7 @@ vector<Contours> FFrame::findContours(){
 					Contours(m, INTENCITY_STEP*i, INTENCITY_STEP * (i+1)));
 		}
 
-		Log::LOG.logFinish(2, "split");
+		Log::LOG->logFinish(2, "split");
 		return splittedContours;
 
 	
