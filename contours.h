@@ -1,6 +1,7 @@
 #ifndef CONTOURS_H
 #define CONTOURS_H
 
+#include <list>
 #include <vector>
 #include "contour.h"
 
@@ -10,7 +11,7 @@ class Contours{
 private:
 	Mat image;
 
-	vector<Contour> contours;
+	list<Contour> contours;
 
 	vector<Vec4i> hierarchy;
 
@@ -20,22 +21,27 @@ private:
 
 	vector<Point> getCenters();
 
+	void filtRepeatedContours(const Contours & ref);
+
 	const int minIntencity;
 
 	const int maxIntencity;
 public:
-	Contours(const Mat & image, int _minIntencity, int _maxIntencity);
+	Contours(const Mat & image, int _minIntencity,
+			int _maxIntencity, const Contours* refContours);
 
 	void draw(Mat & drawing);
 
-	Contour & get(const int i);
+//	Contour & get(const int i);
 
-	vector<Contour> & getAll();
+//	vector<Contour> & getAll();
 
-	vector<vector<Point>> & toVectors();
+//	vector<vector<Point>> & toVectors();
 
 	int getDotCount();
 
 	void writeCentersToFile();
+
+
 };
 #endif

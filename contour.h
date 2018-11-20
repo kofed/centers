@@ -24,5 +24,7 @@ public:
 
 	void drawCenter(Mat * drawing);
 
+	bool equals(const Contour & ref) const;
+
 };
 #endif

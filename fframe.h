@@ -23,6 +23,8 @@ class FFrame
 	
 private:
 	Mat image;
+	
+	vector<Contours> splittedContours;
 
     vector<Point> joinDots(vector<vector<Point>> dots);
 
@@ -33,7 +35,7 @@ private:
 public:
     FFrame(Mat & _image);
 
-    vector<Contours>  findContours();    
+    vector<Contours> & findContours();    
 
 };
 

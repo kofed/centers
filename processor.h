@@ -17,6 +17,7 @@ private:
 	
 	
 public:
+	Processor();
 	
 	void process( Mat & image);
 	void process( VideoCapture & capture);

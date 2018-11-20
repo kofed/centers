@@ -2,6 +2,10 @@
 #include <iostream>
 #include "fframe.h"
 
+Processor::Processor(){
+	loadRoi();
+}
+
 void Processor::process(VideoCapture & capture){
 	
 	Mat image;
@@ -31,15 +35,15 @@ void Processor::process( Mat & image){
 			cv::cvtColor(image, image, CV_BGR2GRAY);
 		}
 
-	//	Mat resized;
-	//	resize(image,resized,Size(width, height));
+		Mat resized;
+		resize(image,resized,Size(width, height));
 
-		Mat cropped(image, roi);
+		Mat cropped(resized, roi);
 
 		Log::LOG->writeImage("cropped",  cropped);
 		Log::LOG->logFinish(2, "load");
 		
-		FFrame frame(image);
+		FFrame frame(cropped);
 		auto splittedContours = frame.findContours();
 		    		
 		Log::LOG->logStart(2, "dots");

@@ -105,7 +105,7 @@ ofstream* Log::openTxt(int name){
 
 ofstream* Log::openTxt(const char * name){
 	stringstream ss;
-	if(!debug){
+	if(debug){
 		ss << logFolder << name << ".txt";
 	}else{
 		ss << logFolder << "/" << folders[2] << "-" << name << ".txt";

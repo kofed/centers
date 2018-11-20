@@ -1,4 +1,5 @@
 #include "contour.h"
+#include <stdlib.h>
 
 Contour::Contour(vector<Point> & _points):points(_points){
 	Moments moments = cv::moments( points, false );
@@ -14,4 +15,6 @@ Point & Contour::getCenter(){
 	return center;
 }
 
-
+bool Contour::equals(const Contour & ref) const{
+	return abs(center.x - ref.center.x) + abs(center.y - ref.center.y) > 10;
+}

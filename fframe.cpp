@@ -18,32 +18,27 @@ void FFrame::check(const Mat & image){
 	}
 }
 
-vector<Contours> FFrame::findContours(){	
-
-	
+vector<Contours> & FFrame::findContours(){
 	Log::LOG->logStart(2, "split");
 		int SPLIT_NUMBER = 10;
 		int MAX_INTENCITY = 256;
 		double INTENCITY_STEP = (double) MAX_INTENCITY/SPLIT_NUMBER;
 
 		Mat blurred;
-		blur( image, blurred, Size(30,30) );
+		blur( image, blurred, Size(10,10) );
 
-		vector<Contours> splittedContours;
-
+		Contours* prevContours = NULL;
 		for(int i = 0; i < SPLIT_NUMBER; ++i){
 			Mat m;
 			inRange(blurred, INTENCITY_STEP*i, INTENCITY_STEP * (i+1), m);
 			splittedContours.push_back(
-					Contours(m, INTENCITY_STEP*i, INTENCITY_STEP * (i+1)));
+					Contours(m, INTENCITY_STEP*i, INTENCITY_STEP * (i+1), prevContours));
+			prevContours = &(splittedContours.at(i));
 		}
 
 		Log::LOG->logFinish(2, "split");
 		return splittedContours;
-
-	
 }
-
 
 
 /*void FFrame::drawCircles(Mat & background, vector<vector<Point> > & contours, int iSplitted){

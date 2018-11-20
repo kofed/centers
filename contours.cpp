@@ -1,7 +1,8 @@
 #include "contours.h"
 #include "log_k.h"
 
-Contours::Contours(const Mat & _image, int _minIntencity, int _maxIntencity)
+Contours::Contours(const Mat & _image, int _minIntencity, int _maxIntencity,
+		const Contours* refContours)
 		:image(_image), minIntencity(_minIntencity), maxIntencity(_maxIntencity){
 	Log::LOG->logStart(2, "contours");
 	findContours( image, vContours, hierarchy, CV_RETR_CCOMP, CV_CHAIN_APPROX_SIMPLE );
@@ -9,9 +10,14 @@ Contours::Contours(const Mat & _image, int _minIntencity, int _maxIntencity)
 		contours.push_back(Contour(vPoint));
 	}
 
-	Mat drawing = Mat::zeros( image.size(), CV_8UC3 );
-	draw(drawing);
-	Log::LOG->writeImage(minIntencity, drawing);
+	if(Log::LOG->debug){
+		Mat drawing = Mat::zeros( image.size(), CV_8UC3 );
+		draw(drawing);
+		Log::LOG->writeImage(minIntencity, drawing);
+	}
+
+	if(refContours != NULL)
+		filtRepeatedContours(*refContours);
 	Log::LOG->logFinish(2, "contours");
 }
 
@@ -33,18 +39,18 @@ vector<Point> Contours::getCenters(){
 	}
 	return centers;
 }
-
+/*
 Contour & Contours::get(const int i){
 	return contours[i];
 }
 
 vector<Contour> & Contours::getAll(){
 	return contours;
-}
-
+}*/
+/*
 vector<vector<Point>> & Contours::toVectors(){
 	return vContours;
-}
+}*/
 
 int Contours::getDotCount(){
 	int count = 0;
@@ -72,4 +78,15 @@ void Contours::writeCentersToFile(){
 		*centersFile << contour.getCenter() << " " << contour.size() << endl;
 	}
 	Log::LOG->closeTxt(centersFile);
+}
+
+void Contours::filtRepeatedContours(const Contours & ref){
+	for(auto itRef = ref.contours.begin(); itRef != ref.contours.end(); ++itRef){
+		for(auto it = contours.begin(); it != contours.end() ; ++it ){
+			if(it->equals(*itRef)){
+				contours.erase(it);
+				break;
+			}
+		}
+	}
 }
