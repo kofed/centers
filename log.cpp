@@ -122,3 +122,10 @@ void Log::closeTxt(ofstream* file){
 duration<double> & Log::getDuration(const char* method){
 	return durations[method];
 }
+
+FileStorage*  Log::openYml(const char * name, FileStorage::Mode mode){
+	FileStorage* yml = new FileStorage(logFolder + name, mode);
+	return yml;
+
+
+}

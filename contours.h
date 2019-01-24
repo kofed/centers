@@ -42,6 +42,5 @@ public:
 
 	void writeCentersToFile();
 
-
 };
 #endif

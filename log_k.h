@@ -15,8 +15,6 @@ public:
 	static Log* LOG;
 	
 	Log();
-	
-	const char* LOG_DEFAULT_ROOT = "log/";
 			
 	void logStart(int level, const char * method);
 
@@ -39,8 +37,11 @@ public:
 	ofstream* openTxt(int name);
 	
 	void closeTxt(ofstream* file);
+
+	FileStorage * openYml(const char * name, FileStorage::Mode mode = WRITE);
 private:
 	
+	const char* LOG_DEFAULT_ROOT = "log/";
 	
 	map<string, duration<double>> durations;
 	

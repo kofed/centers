@@ -59,10 +59,22 @@ void Processor::process( Mat & image){
 		 Log::LOG->logFinish(2, "dots");
 		 
 		 Log::LOG->logStart(2, "centers");
-		 	for(int iSplitted = 0; iSplitted < splittedContours.size(); ++iSplitted){
-		 		splittedContours[iSplitted].writeCentersToFile();
-		 	}
-		 	Log::LOG->logFinish(2, "centers");
+		 for(int iSplitted = 0; iSplitted < splittedContours.size(); ++iSplitted){
+		 	splittedContours[iSplitted].writeCentersToFile();
+		 }
+		 Log::LOG->logFinish(2, "centers");
+
+		if(_3d){
+			Log::LOG->logStart(2, "3d");
+				FileStorage hYml = Log::LOG->openYml("h", FileStorage::READ);
+
+				for(Contours contours : splittedContours){
+					FileStorage contoursYml(contours.minIntencity, FileStorage::WRITE);
+					Contours3d contours3d(contours, h);
+					contours3d.toYml(yml);
+				}
+			Log::LOG->logFinish(2, "3d");
+		}
 }
 
 void Processor::loadRoi(){

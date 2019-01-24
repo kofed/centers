@@ -26,5 +26,6 @@ public:
 
 	bool equals(const Contour & ref) const;
 
+	void toYml(FileStorage & yml);
 };
 #endif

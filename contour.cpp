@@ -18,3 +18,9 @@ Point & Contour::getCenter(){
 bool Contour::equals(const Contour & ref) const{
 	return abs(center.x - ref.center.x) + abs(center.y - ref.center.y) > 10;
 }
+
+void Contour::toYml(FileStorage & yml){
+	for(auto point : points){
+		yml << point;
+	} 
+}
