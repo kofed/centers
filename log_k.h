@@ -38,24 +38,32 @@ public:
 	
 	void closeTxt(ofstream* file);
 
-	FileStorage * openYml(const char * name, FileStorage::Mode mode = WRITE);
+	FileStorage * openYmlRead(const char * name);
+
+	FileStorage * openYmlRead(const int name);
+
+	FileStorage * openYmlWrite(const char * name);
+
+	FileStorage * openYmlWrite(const int name);
+
+	void releaseAndDelete(FileStorage * yml);
 private:
 	
 	const char* LOG_DEFAULT_ROOT = "log/";
 	
 	map<string, duration<double>> durations;
 	
-    void showImage(Mat & image);
+	void showImage(Mat & image);
     
-    string logFolder;
+    	string logFolder;
     
-    /*
-     * Log folders by level
-     */
-    vector<string> folders;
+    	/*
+     	* Log folders by level
+     	*/
+    	vector<string> folders;
         
-    void buildLogFolder();
+    	void buildLogFolder();
     
-    system_clock::time_point methodStart;
+    	system_clock::time_point methodStart;
 };
 #endif

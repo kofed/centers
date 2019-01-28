@@ -27,16 +27,12 @@ private:
 
 	const int maxIntencity;
 public:
+	const char* getMinIntencityString();
+
 	Contours(const Mat & image, int _minIntencity,
 			int _maxIntencity, const Contours* refContours);
 
 	void draw(Mat & drawing);
-
-//	Contour & get(const int i);
-
-//	vector<Contour> & getAll();
-
-//	vector<vector<Point>> & toVectors();
 
 	int getDotCount();
 

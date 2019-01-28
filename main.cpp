@@ -22,7 +22,8 @@ int main(int argc, const char* argv[]) {
 	const char* keys = "{help h usage ? |      | print this message   }"
 				  "{i        |   |image to process     }"
 				  "{v        |   |video to process     }"
-				 "{d         |   | debug}";
+				 "{d         |   | debug}"
+				"{add3d      |   |add 3-rd coordinate from file h.yml";
 
 
     CommandLineParser parser(argc, argv, keys);
@@ -35,6 +36,8 @@ int main(int argc, const char* argv[]) {
     Log::LOG->debug = false; //  parser.has("d");
 
     Processor processor;
+
+    processor.add3d = !parser.get<String>("add3d").empty();//parser.has("add3d");
 /*    String imagePath = parser.get<String>(std::string("i"));
     if(!imagePath.empty()){
     	 try{

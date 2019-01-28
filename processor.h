@@ -17,6 +17,8 @@ private:
 	
 	
 public:
+	bool add3d;	
+
 	Processor();
 	
 	void process( Mat & image);

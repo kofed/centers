@@ -2,6 +2,7 @@
 #include <sstream>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <sstream>
 
 Log* Log::LOG = new Log();
 
@@ -123,9 +124,24 @@ duration<double> & Log::getDuration(const char* method){
 	return durations[method];
 }
 
-FileStorage*  Log::openYml(const char * name, FileStorage::Mode mode){
-	FileStorage* yml = new FileStorage(logFolder + name, mode);
+FileStorage*  Log::openYmlRead(const char * name){
+	FileStorage* yml = new FileStorage(logFolder + name, FileStorage::READ);
 	return yml;
+}
 
+FileStorage* Log::openYmlRead(const int name){
+	stringstream ss;
+	ss << name;
+	return openYmlRead(ss.str().c_str());
+}
+
+FileStorage* Log::openYmlWrite(const char* name){
+	return new FileStorage(logFolder + name, FileStorage::WRITE);
+}
+
+FileStorage* Log::openYmlWrite(const int name){
+	stringstream ss;
+	ss << name;
+	return openYmlWrite(ss.str().c_str());
 
 }

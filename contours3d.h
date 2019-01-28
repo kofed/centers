@@ -1,4 +1,5 @@
 #include "contours.h"
+#include "contour3d.h"
 
 using namespace cv;
 

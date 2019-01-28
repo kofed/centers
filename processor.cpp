@@ -1,6 +1,7 @@
 #include "processor.h"
 #include <iostream>
 #include "fframe.h"
+#include "contours3d.h"
 
 Processor::Processor(){
 	loadRoi();
@@ -64,17 +65,30 @@ void Processor::process( Mat & image){
 		 }
 		 Log::LOG->logFinish(2, "centers");
 
-		if(_3d){
-			Log::LOG->logStart(2, "3d");
-				FileStorage hYml = Log::LOG->openYml("h", FileStorage::READ);
-
-				for(Contours contours : splittedContours){
-					FileStorage contoursYml(contours.minIntencity, FileStorage::WRITE);
-					Contours3d contours3d(contours, h);
-					contours3d.toYml(yml);
-				}
-			Log::LOG->logFinish(2, "3d");
+		Log::LOG->logStart(2, "3d");
+		if(add3d){
+			FileStorage* hYml = Log::LOG->openYmlRead("h");
+                                				
+			for(Contours contours : splittedContours){
+				int h;
+				(*hYml)[contours.getMinIntencityString()] >> h;
+					
+				FileStorage* contoursYml = Log::LOG->openYmlWrite(contours.getMinIntencityString());
+				Contours3d contours3d(contours, h);
+				contours3d.toYml(*contoursYml);
+			}
+			hYml->release();
+			delete hYml;
+		}else{
+			FileStorage* hYml = Log::LOG->openYmlWrite("h");
+			for(Contours contours : splittedContours){
+				*hYml << contours.getMinIntencityString() << 0;
+			}
+			hYml->release();
+			delete hYml;
 		}
+		Log::LOG->logFinish(2, "3d");
+	
 }
 
 void Processor::loadRoi(){

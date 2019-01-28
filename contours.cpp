@@ -90,3 +90,9 @@ void Contours::filtRepeatedContours(const Contours & ref){
 		}
 	}
 }
+
+const char* Contours::getMinIntencityString(){
+	stringstream ss;
+	ss << minIntencity;
+	return ss.str().c_str();
+}
