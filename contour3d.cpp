@@ -11,6 +11,6 @@ Contour3d::Contour3d(const Contour & contour, const int h){
 
 void Contour3d::toYml(FileStorage & yml) const{
 	for(auto p : points){
-		yml << p.x << p.y << p.z;
+		yml<< "point" << p;
 	}
 }

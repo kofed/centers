@@ -29,7 +29,7 @@ int main(int argc, const char* argv[]) {
     CommandLineParser parser(argc, argv, keys);
     if (!parser.get<String>(std::string("help")).empty())
     {
-        parser.printParams();
+//        parser.printParams();
         return 0;
     }
 
@@ -65,6 +65,6 @@ int main(int argc, const char* argv[]) {
     	return EXIT_SUCCESS;
     }
 
-    parser.printParams();
+  //  parser.printParams();
     return 1;
 }
