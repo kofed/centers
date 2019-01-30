@@ -7,7 +7,7 @@ Contours::Contours(const Mat & _image, int _minIntencity, int _maxIntencity,
 	Log::LOG->logStart(2, "contours");
 	findContours( image, vContours, hierarchy, CV_RETR_CCOMP, CV_CHAIN_APPROX_SIMPLE );
 	for(auto vPoint : vContours){
-		contours.push_back(Contour(vPoint));
+		lContours.push_back(Contour(vPoint));
 	}
 
 	if(Log::LOG->debug){
@@ -34,7 +34,7 @@ void Contours::draw(Mat & drawing){
 vector<Point> Contours::getCenters(){
 	vector<Point> centers;
 
-	for(auto contour : contours){
+	for(auto contour : lContours){
 		centers.push_back(contour.getCenter());
 	}
 	return centers;
@@ -54,7 +54,7 @@ vector<vector<Point>> & Contours::toVectors(){
 
 int Contours::getDotCount(){
 	int count = 0;
-	for(auto c : contours){
+	for(auto c : lContours){
 		count += c.size();
 	}
 	return count;
@@ -68,23 +68,23 @@ void Contours::writeCentersToFile(){
 	if(Log::LOG->debug){
 		Mat drawing = Mat::zeros( image.size(), CV_8UC3 );
 		cvtColor(image, drawing, COLOR_GRAY2BGR);
-		for(Contour contour : contours){
+		for(Contour contour : lContours){
 			circle( drawing, contour.getCenter(), 4, Scalar(0, 0, 255), -1, 8, 0 );
 		}
 		Log::LOG->writeImage( minIntencity, drawing);
 	}
 
-	for(Contour contour : contours){
+	for(Contour contour : lContours){
 		*centersFile << contour.getCenter() << " " << contour.size() << endl;
 	}
 	Log::LOG->closeTxt(centersFile);
 }
 
 void Contours::filtRepeatedContours(const Contours & ref){
-	for(auto itRef = ref.contours.begin(); itRef != ref.contours.end(); ++itRef){
-		for(auto it = contours.begin(); it != contours.end() ; ++it ){
+	for(auto itRef = ref.lContours.begin(); itRef != ref.lContours.end(); ++itRef){
+		for(auto it = lContours.begin(); it != lContours.end() ; ++it ){
 			if(it->equals(*itRef)){
-				contours.erase(it);
+				lContours.erase(it);
 				break;
 			}
 		}

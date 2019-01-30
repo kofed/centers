@@ -11,7 +11,7 @@ class Contours{
 private:
 	Mat image;
 
-	list<Contour> contours;
+	list<Contour> lContours;
 
 	vector<Vec4i> hierarchy;
 
@@ -27,6 +27,8 @@ private:
 
 	const int maxIntencity;
 public:
+	const list<Contour> & getLContours() const {return lContours;}
+
 	const char* getMinIntencityString();
 
 	Contours(const Mat & image, int _minIntencity,

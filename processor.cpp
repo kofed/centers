@@ -82,7 +82,7 @@ void Processor::process( Mat & image){
 		}else{
 			FileStorage* hYml = Log::LOG->openYmlWrite("h");
 			for(Contours contours : splittedContours){
-				*hYml << contours.getMinIntencityString() << 0;
+				*hYml << /*contours.getMinIntencityString()*/ "0" << 0;
 			}
 			hYml->release();
 			delete hYml;

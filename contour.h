@@ -1,5 +1,5 @@
-#ifndef CONTOUR_H
-#define CONTOUR_H
+#ifndef __CONTOUR_H
+#define __CONTOUR_H
 
 #include <opencv2/opencv.hpp>
 #include <vector>
@@ -14,6 +14,8 @@ private:
 	Point center;
 
 public:
+	const vector<Point> &  getPoints()const {return points;}	
+
 	Contour(vector<Point> & _points);
 
 	int size();
@@ -26,6 +28,7 @@ public:
 
 	bool equals(const Contour & ref) const;
 
-	void toYml(FileStorage & yml);
+	void toYml(FileStorage & yml) const;
+
 };
 #endif
