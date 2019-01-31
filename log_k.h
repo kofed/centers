@@ -38,11 +38,11 @@ public:
 	
 	void closeTxt(ofstream* file);
 
-	FileStorage * openYmlRead(const char * name);
+	FileStorage * openYmlRead(const string name);
 
 	FileStorage * openYmlRead(const int name);
 
-	FileStorage * openYmlWrite(const char * name);
+	FileStorage * openYmlWrite(const string name);
 
 	FileStorage * openYmlWrite(const int name);
 

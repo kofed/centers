@@ -124,7 +124,7 @@ duration<double> & Log::getDuration(const char* method){
 	return durations[method];
 }
 
-FileStorage*  Log::openYmlRead(const char * name){
+FileStorage*  Log::openYmlRead(const string name){
 	FileStorage* yml = new FileStorage(logFolder + name, FileStorage::READ);
 	return yml;
 }
@@ -132,10 +132,10 @@ FileStorage*  Log::openYmlRead(const char * name){
 FileStorage* Log::openYmlRead(const int name){
 	stringstream ss;
 	ss << name;
-	return openYmlRead(ss.str().c_str());
+	return openYmlRead(ss.str());
 }
 
-FileStorage* Log::openYmlWrite(const char* name){
+FileStorage* Log::openYmlWrite(const string name){
 	return new FileStorage(logFolder + name, FileStorage::WRITE);
 }
 

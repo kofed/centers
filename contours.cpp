@@ -91,8 +91,9 @@ void Contours::filtRepeatedContours(const Contours & ref){
 	}
 }
 
-const char* Contours::getMinIntencityString(){
+string Contours::getYmlName() const {
 	stringstream ss;
+	ss << "_";
 	ss << minIntencity;
-	return ss.str().c_str();
+	return ss.str();
 }

@@ -67,22 +67,22 @@ void Processor::process( Mat & image){
 
 		Log::LOG->logStart(2, "3d");
 		if(add3d){
-			FileStorage* hYml = Log::LOG->openYmlRead("h");
+			FileStorage* hYml = Log::LOG->openYmlRead("h.yml");
                                 				
 			for(Contours contours : splittedContours){
 				int h;
-				(*hYml)[contours.getMinIntencityString()] >> h;
+				(*hYml)[contours.getYmlName()] >> h;
 					
-				FileStorage* contoursYml = Log::LOG->openYmlWrite(contours.getMinIntencityString());
+				FileStorage* contoursYml = Log::LOG->openYmlWrite(contours.getYmlName());
 				Contours3d contours3d(contours, h);
 				contours3d.toYml(*contoursYml);
 			}
 			hYml->release();
 			delete hYml;
 		}else{
-			FileStorage* hYml = Log::LOG->openYmlWrite("h");
+			FileStorage* hYml = Log::LOG->openYmlWrite("h.yml");
 			for(Contours contours : splittedContours){
-				*hYml << /*contours.getMinIntencityString()*/ "0" << 0;
+				*hYml << contours.getYmlName() << 0;
 			}
 			hYml->release();
 			delete hYml;

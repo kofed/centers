@@ -37,7 +37,7 @@ int main(int argc, const char* argv[]) {
 
     Processor processor;
 
-    processor.add3d = parser.get<String>("add3d").empty();//parser.has("add3d");
+    processor.add3d = !parser.get<String>("add3d").empty();//parser.has("add3d");
 /*    String imagePath = parser.get<String>(std::string("i"));
     if(!imagePath.empty()){
     	 try{

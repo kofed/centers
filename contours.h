@@ -29,7 +29,7 @@ private:
 public:
 	const list<Contour> & getLContours() const {return lContours;}
 
-	const char* getMinIntencityString();
+	string getYmlName() const;
 
 	Contours(const Mat & image, int _minIntencity,
 			int _maxIntencity, const Contours* refContours);
