@@ -1,7 +1,0 @@
--1. Why counturs png are fully black. 02
--2. Load ROI 
-3. test on raspberry
--4. architecture for controller. 28
--5. Why from video I did not get normalm Split?
-6. out number of dots in contours
--7. does not process last splitted area

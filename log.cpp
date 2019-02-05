@@ -77,13 +77,13 @@ void Log::showImage(Mat & image){
 
 void Log::setFolder(int level, int name){
 	stringstream ss;
-	ss << "/" << name << "/";
+	ss <<  name ;
 	setFolder(level, ss.str().c_str());
 }
 
 void Log::setFolder(int level, const char* name){
 	folders[level] = name;
-	if(level > 1)
+	if(!debug && level > 1)
 		return;
 	buildLogFolder();
 }
@@ -92,7 +92,7 @@ void Log::buildLogFolder(){
 
 	stringstream ss;
 	for(auto folder : folders){
-		ss << "/" << folder << "/";
+		ss << folder << "/";
 	}
 	logFolder = ss.str();
 	mkdir(logFolder.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);

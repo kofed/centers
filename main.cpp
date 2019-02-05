@@ -33,7 +33,7 @@ int main(int argc, const char* argv[]) {
         return 0;
     }
 
-    Log::LOG->debug = false; //  parser.has("d");
+    Log::LOG->debug = true; //  parser.has("d");
 
     Processor processor;
 

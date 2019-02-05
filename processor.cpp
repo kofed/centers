@@ -73,7 +73,7 @@ void Processor::process( Mat & image){
 				int h;
 				(*hYml)[contours.getYmlName()] >> h;
 					
-				FileStorage* contoursYml = Log::LOG->openYmlWrite(contours.getYmlName());
+				FileStorage* contoursYml = Log::LOG->openYmlWrite(contours.getYmlName() + ".yml");
 				Contours3d contours3d(contours, h);
 				contours3d.toYml(*contoursYml);
 			}
