@@ -1,5 +1,5 @@
 #!/bin/bash
 
-sudo apt-get install libopencv-dev
+sudo apt install g++ libopencv-dev pkg-config
 cd ..
 make
