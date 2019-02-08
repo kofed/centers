@@ -3,4 +3,4 @@
 Расчет с третьей координатой:
 	1. ./contours -v=resources/1.avi
 	2. добавивть вручную третью координату в h.yml
-	3. ./contours -v=resources/1.avi -calib3d 
+	3. ./contours -v=resources/1.avi -add3d 
