@@ -98,3 +98,12 @@ const Contour & Contours::according(const Contour & contour) const {
 	}
 	return *itAcc;
 }
+
+const Contours3d disparity(const Contours & contours){
+	vector<Contour3d> disparities;
+	for(auto it = lContours.begin(); it != lContours.end(); ++it){
+		Contour accContour = contours.according(*it);
+		disparities.push_back(accContour.disparity(*it));
+	}
+	return Contours3d(disparities);
+}

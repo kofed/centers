@@ -41,5 +41,7 @@ public:
 	void writeCentersToFile();
 
 	const Contour & according(const Contour & contour) const;
+
+	const Contours3d & disparity(const Contours & contours) const;
 };
 #endif

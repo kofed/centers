@@ -25,3 +25,12 @@ void Contour::toYml(FileStorage & yml) const{
 double Contour::distToCenter(const Point point) const{
 	return sqrt(pow(center.x - point.x, 2.0) + pow(center.y - point.y, 2.0));
 };
+
+Contour Contour::disparity(const Contour & contour) const {
+	auto it = iterator();
+	auto itAcc = contour.iterator();
+
+	while(it.next() && itAcc.next()){
+		int dy = it.get().y() - itAcc.get().y();
+	}	
+};

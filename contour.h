@@ -32,5 +32,17 @@ public:
 
 	Contour disparity(const Contour & contour) const;
 
+	class Iterator{
+		private:
+			vector<Point>::const_iterator it;
+			int y;
+		public:
+			Iterator(const Contour & _contour);
+			bool next();
+			Point get();
+	}
+
+	Iterator iterator();
+
 };
 #endif

@@ -15,6 +15,8 @@ private:
 public:
  	Contours3d(const Contours & contours2d, const int h);
 
+	Contours3d(const vector<Contour3d> & _vContours);
+
 	void toYml(FileStorage & yml) const;
 };
 
