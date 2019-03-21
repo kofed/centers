@@ -11,16 +11,14 @@ class Contour{
 private:
 	vector<Point> points;
 
-	Point center;
-
 public:
+	Point center;
+	
 	const vector<Point> &  getPoints()const {return points;}	
 
 	Contour(vector<Point> & _points);
 
 	int size();
-
-	Point & getCenter();
 
 	void draw(Mat * drawing);
 
@@ -29,6 +27,10 @@ public:
 	bool equals(const Contour & ref) const;
 
 	void toYml(FileStorage & yml) const;
+
+	double distToCenter(const Point point) const;
+
+	Contour disparity(const Contour & contour) const;
 
 };
 #endif

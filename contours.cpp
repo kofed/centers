@@ -35,22 +35,10 @@ vector<Point> Contours::getCenters(){
 	vector<Point> centers;
 
 	for(auto contour : lContours){
-		centers.push_back(contour.getCenter());
+		centers.push_back(contour.center);
 	}
 	return centers;
 }
-/*
-Contour & Contours::get(const int i){
-	return contours[i];
-}
-
-vector<Contour> & Contours::getAll(){
-	return contours;
-}*/
-/*
-vector<vector<Point>> & Contours::toVectors(){
-	return vContours;
-}*/
 
 int Contours::getDotCount(){
 	int count = 0;
@@ -69,13 +57,13 @@ void Contours::writeCentersToFile(){
 		Mat drawing = Mat::zeros( image.size(), CV_8UC3 );
 		cvtColor(image, drawing, COLOR_GRAY2BGR);
 		for(Contour contour : lContours){
-			circle( drawing, contour.getCenter(), 4, Scalar(0, 0, 255), -1, 8, 0 );
+			circle( drawing, contour.center, 4, Scalar(0, 0, 255), -1, 8, 0 );
 		}
 		Log::LOG->writeImage( minIntencity, drawing);
 	}
 
 	for(Contour contour : lContours){
-		*centersFile << contour.getCenter() << " " << contour.size() << endl;
+		*centersFile << contour.center << " " << contour.size() << endl;
 	}
 	Log::LOG->closeTxt(centersFile);
 }
@@ -96,4 +84,17 @@ string Contours::getYmlName() const {
 	ss << "_";
 	ss << minIntencity;
 	return ss.str();
+}
+
+const Contour & Contours::according(const Contour & contour) const {
+	int d = 10000;
+	list<Contour>::const_iterator itAcc = lContours.begin();
+	for(auto it = lContours.begin(); it != lContours.end(); ++it){
+		int _d = contour.distToCenter(it->center);
+		if(_d < d){
+			d = _d;
+			itAcc = it;
+		}
+	}
+	return *itAcc;
 }

@@ -40,6 +40,6 @@ public:
 
 	void writeCentersToFile();
 
-	const Contour & according(Contour & contour);
+	const Contour & according(const Contour & contour) const;
 };
 #endif

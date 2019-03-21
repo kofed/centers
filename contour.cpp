@@ -12,10 +12,6 @@ int Contour::size(){
 	return points.size();
 }
 
-Point & Contour::getCenter(){
-	return center;
-}
-
 bool Contour::equals(const Contour & ref) const{
 	return abs(center.x - ref.center.x) + abs(center.y - ref.center.y) < 10;
 }
@@ -25,3 +21,7 @@ void Contour::toYml(FileStorage & yml) const{
 		yml << point;
 	} 
 }
+
+double Contour::distToCenter(const Point point) const{
+	return sqrt(pow(center.x - point.x, 2.0) + pow(center.y - point.y, 2.0));
+};
