@@ -7,6 +7,11 @@ Contours3d::Contours3d(const Contours & contours2d, const int h){
 	}
 }
 
+Contours3d::Contours3d(const vector<Contour3d> & _vContours)
+	:vContours(_vContours){
+
+}
+
 void Contours3d::toYml(cv::FileStorage & yml)const{
 	for(auto c : vContours){
 		c.toYml(yml);

@@ -9,6 +9,11 @@ Contour3d::Contour3d(const Contour & contour, const int h){
 	}
 }
 
+Contour3d::Contour3d(const vector<Point3_<int> & _points)
+	:point(_points){
+
+}
+
 void Contour3d::toYml(FileStorage & yml) const{
 	for(auto p : points){
 		yml<< "point" << p;

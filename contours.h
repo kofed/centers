@@ -7,6 +7,8 @@
 
 using namespace std;
 
+class Contours3d;
+
 class Contours{
 private:
 	Mat image;
@@ -42,6 +44,6 @@ public:
 
 	const Contour & according(const Contour & contour) const;
 
-	const Contours3d & disparity(const Contours & contours) const;
+	Contours3d  disparity(const Contours & contours);
 };
 #endif

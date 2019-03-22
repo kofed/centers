@@ -12,6 +12,8 @@ private:
 public:
 	Contour3d(const Contour &  contour2d, int h);
 
+	Contour3d(const vector<Point3_<int>> & _points);
+
 	void toYml(FileStorage & yml) const;
 };
 #endif

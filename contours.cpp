@@ -1,4 +1,5 @@
 #include "contours.h"
+#include "contours3d.h"
 #include "log_k.h"
 
 Contours::Contours(const Mat & _image, int _minIntencity, int _maxIntencity,
@@ -99,7 +100,7 @@ const Contour & Contours::according(const Contour & contour) const {
 	return *itAcc;
 }
 
-const Contours3d disparity(const Contours & contours){
+Contours3d Contours::disparity(const Contours & contours) {
 	vector<Contour3d> disparities;
 	for(auto it = lContours.begin(); it != lContours.end(); ++it){
 		Contour accContour = contours.according(*it);

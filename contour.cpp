@@ -26,11 +26,43 @@ double Contour::distToCenter(const Point point) const{
 	return sqrt(pow(center.x - point.x, 2.0) + pow(center.y - point.y, 2.0));
 };
 
-Contour Contour::disparity(const Contour & contour) const {
+Contour3d Contour::disparity(const Contour & contour) const {
 	auto it = iterator();
 	auto itAcc = contour.iterator();
 
+	vector<Point3_<int>> disparityPoints;
+
 	while(it.next() && itAcc.next()){
 		int dy = it.get().y() - itAcc.get().y();
-	}	
+		disparityPoints.push_back(Point3_<int>(it.get().x, it.get().y(), dy);
+	}
+	
+	return Contour3d(disparityPoints);
 };
+
+Contour::Iterator Contour::iterator(){
+	return Iterator(*this);
+}
+
+Contour::Iterator Contour::Iterator::Iterator(const Contour & contour){
+	it = contour.points.begin();
+	end = contour.points.end();
+	if(it == end){
+		throw runtime_error("Создание итератора для пустого контура");
+	}
+}
+
+const Point Contour::Iterator::get(){
+	if(it == end){
+		throw runtime_error("it == end");
+	}
+	return *it;
+}
+
+bool Contour::Iterator::next(){
+	if(it != end){
+		++it;
+		return true;
+	}
+	return false;
+}

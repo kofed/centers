@@ -7,6 +7,8 @@
 using namespace std;
 using namespace cv;
 
+class Contour3d;
+
 class Contour{
 private:
 	vector<Point> points;
@@ -30,17 +32,18 @@ public:
 
 	double distToCenter(const Point point) const;
 
-	Contour disparity(const Contour & contour) const;
+	Contour3d disparity(const Contour & contour) const;
 
 	class Iterator{
 		private:
 			vector<Point>::const_iterator it;
+			const vector<Point>::const_iterator end;
 			int y;
 		public:
 			Iterator(const Contour & _contour);
 			bool next();
 			Point get();
-	}
+	};
 
 	Iterator iterator();
 
