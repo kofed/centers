@@ -34,15 +34,20 @@ public:
 
 	Contour3d disparity(const Contour & contour) const;
 
+	Point getPoint(const float radian);
+
+	float tg(const Point point);
+
 	class Iterator{
 		private:
 			vector<Point>::const_iterator it;
 			const vector<Point>::const_iterator end;
-			int y;
+			const Contour & contour;
 		public:
 			Iterator(const Contour & _contour);
 			bool next();
 			Point get();
+			Point get(const float tg);
 	};
 
 	Iterator iterator();

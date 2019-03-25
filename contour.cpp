@@ -27,9 +27,6 @@ double Contour::distToCenter(const Point point) const{
 };
 
 Contour3d Contour::disparity(const Contour & contour) const {
-	auto it = iterator();
-	auto itAcc = contour.iterator();
-
 	vector<Point3_<int>> disparityPoints;
 
 	while(it.next() && itAcc.next()){
@@ -39,6 +36,10 @@ Contour3d Contour::disparity(const Contour & contour) const {
 	
 	return Contour3d(disparityPoints);
 };
+
+float Contour::tg(const Point point){
+	return (point.y - center.y)/(point.x - center.x);
+}
 
 Contour::Iterator Contour::iterator(){
 	return Iterator(*this);
@@ -57,6 +58,10 @@ const Point Contour::Iterator::get(){
 		throw runtime_error("it == end");
 	}
 	return *it;
+}
+
+const Point Contour::Iterator::get(const float tg){
+
 }
 
 bool Contour::Iterator::next(){
