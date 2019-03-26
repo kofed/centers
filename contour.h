@@ -40,12 +40,14 @@ public:
 
 	class Iterator{
 		private:
-			vector<Point>::const_iterator it;
+			vector<Point>::iterator it;
 			const vector<Point>::const_iterator end;
 			const Contour & contour;
+			float tg1, tg2;
+			bool tgCondition(const float tg);
 		public:
 			Iterator(const Contour & _contour);
-			bool next();
+			bool next(const float tg);
 			Point get();
 			Point get(const float tg);
 	};

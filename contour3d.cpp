@@ -9,8 +9,8 @@ Contour3d::Contour3d(const Contour & contour, const int h){
 	}
 }
 
-Contour3d::Contour3d(const vector<Point3_<int> & _points)
-	:point(_points){
+Contour3d::Contour3d(const vector<Point3_<int>> & _points)
+	:points(_points){
 
 }
 
