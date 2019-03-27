@@ -1,6 +1,7 @@
 #include "contour.h"
 #include <stdlib.h>
 #include "opencv2/opencv.hpp"
+#include "contour3d.h"
 
 Contour::Contour(vector<Point> & _points):points(_points){
 	Moments moments = cv::moments( points, false );
@@ -28,26 +29,27 @@ double Contour::distToCenter(const Point point) const{
 
 Contour3d Contour::disparity(const Contour & contour) const {
 	vector<Point3_<int>> disparityPoints;
+	auto it = iterator();
+	auto itAcc = contour.iterator();
 
-	while(it.next() && itAcc.next()){
-		int dy = it.get().y() - itAcc.get().y();
-		disparityPoints.push_back(Point3_<int>(it.get().x, it.get().y(), dy);
+	while(it.next() && itAcc.next(it.tg())){
+		int dx = it.get().x - itAcc.get(it.tg()).x;
+		disparityPoints.push_back(Point3_<int>(it.get().x, it.get().y, dx));
 	}
 	
 	return Contour3d(disparityPoints);
 };
 
-float Contour::tg(const Point point){
+float Contour::tg(const Point point) const {
 	return (point.y - center.y)/(point.x - center.x);
 }
 
-Contour::Iterator Contour::iterator(){
+Contour::Iterator Contour::iterator() const{
 	return Iterator(*this);
 }
 
-Contour::Iterator Contour::Iterator::Iterator(const Contour & contour){
-	it = contour.points.begin();
-	end = contour.points.end();
+Contour::Iterator::Iterator(const Contour & _contour):contour(_contour), end(contour.points.end()){
+	it = _contour.points.begin();
 	if(it == end){
 		throw runtime_error("Создание итератора для пустого контура");
 	}
@@ -55,14 +57,14 @@ Contour::Iterator Contour::Iterator::Iterator(const Contour & contour){
 	tg1 = 0;
 }
 
-const Point Contour::Iterator::get(){
+const Point Contour::Iterator::get() const{
 	if(it == end){
 		throw runtime_error("it == end");
 	}
 	return *it;
 }
 
-const Point Contour::Iterator::get(const float tg){
+const Point Contour::Iterator::get(const float tg) const{
 	float k = (tg - tg1)/(tg2 - tg1);
 	float dx = k * (it->x - (it-1)->x);
 	float dy = k * (it->y - (it-1)->y);
@@ -82,6 +84,19 @@ bool Contour::Iterator::next(const float tg){
 	return false;
 }
 
-bool Contour::Iterator::tgCondition(const float tg){
+bool Contour::Iterator::next(){
+	++it;
+	if(it == end){
+		return false;
+	}
+
+	return true;
+}
+
+bool Contour::Iterator::tgCondition(const float tg) const{
 	return (tg2 > tg && tg < tg1) || (tg2 < tg && tg > tg1);
+}
+
+float Contour::Iterator::tg() const{
+	return contour.tg(*it);
 }

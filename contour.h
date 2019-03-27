@@ -36,23 +36,27 @@ public:
 
 	Point getPoint(const float radian);
 
-	float tg(const Point point);
+	float tg(const Point point) const;
+
+	Contour diviate(const int dx, const int dy);
 
 	class Iterator{
 		private:
-			vector<Point>::iterator it;
+			vector<Point>::const_iterator it;
 			const vector<Point>::const_iterator end;
 			const Contour & contour;
 			float tg1, tg2;
-			bool tgCondition(const float tg);
+			bool tgCondition(const float tg) const;
 		public:
 			Iterator(const Contour & _contour);
 			bool next(const float tg);
-			Point get();
-			Point get(const float tg);
+			bool next();
+			const Point get() const;
+			const Point get(const float tg) const;
+			float tg() const;
 	};
 
-	Iterator iterator();
+	Iterator iterator() const;
 
 };
 #endif
