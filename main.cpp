@@ -23,7 +23,8 @@ int main(int argc, const char* argv[]) {
 				  "{i        |   |image to process     }"
 				  "{v        |   |video to process     }"
 				 "{d         |   | debug}"
-				"{add3d      |   |add 3-rd coordinate from file h.yml}";
+				"{add3d      |   |add 3-rd coordinate from file h.yml}"
+				"{t           |   |run tests}";
 
 
     CommandLineParser parser(argc, argv, keys);
@@ -33,13 +34,26 @@ int main(int argc, const char* argv[]) {
         return 0;
     }
 
+
     Log::LOG->debug = true; //  parser.has("d");
 
     Processor processor;
 
     processor.add3d = !parser.get<String>("add3d").empty();//parser.has("add3d");
-/*    String imagePath = parser.get<String>(std::string("i"));
-    if(!imagePath.empty()){
+
+    String imagePath = parser.get<String>(std::string("i"));
+    if(!parser.get<String>(string("t")).empty()){
+	if(imagePath.empty()){
+		cout << "Для запуска тестов укажите путь файла с изображением" << endl;
+		return;
+	}
+	Tests tests(processor, imagePath);
+	tests.run();
+	return;
+    }
+
+
+/*    if(!imagePath.empty()){
     	 try{
     		 Mat image = imread(imagePath, IMREAD_GRAYSCALE);
     		 centers.process(image);
