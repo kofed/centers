@@ -2,6 +2,10 @@
 #include "contours3d.h"
 #include "log_k.h"
 
+Contours::Contours(const list<Contour> & _lContours):lContours(_lContours){
+
+}
+
 Contours::Contours(const Mat & _image, int _minIntencity, int _maxIntencity,
 		const Contours* refContours)
 		:image(_image), minIntencity(_minIntencity), maxIntencity(_maxIntencity){
@@ -107,4 +111,12 @@ Contours3d Contours::disparity(const Contours & contours) {
 		disparities.push_back(accContour.disparity(*it));
 	}
 	return Contours3d(disparities);
+}
+
+Contours Contours::diviate(const int dx, const int dy){
+	list<Contour> divContours;	
+	for(auto contour : lContours){
+		divContours.push_back(contour.diviate(dx, dy));
+	}
+	return Contours(divContours);
 }

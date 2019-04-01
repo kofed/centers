@@ -100,3 +100,12 @@ bool Contour::Iterator::tgCondition(const float tg) const{
 float Contour::Iterator::tg() const{
 	return contour.tg(*it);
 }
+
+Contour Contour::diviate(const int dx, const int dy){
+	vector<Point> diviated;
+
+	for_each(points.begin(), points.end(), [](Point const& p){
+		diviated.push_back(Point(p.x + dx, p.y + dy));	
+	});
+	return Contour(diviated);
+}

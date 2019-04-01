@@ -36,6 +36,8 @@ public:
 	Contours(const Mat & image, int _minIntencity,
 			int _maxIntencity, const Contours* refContours);
 
+	Contours(const list<Contour> & _lContours);
+
 	void draw(Mat & drawing);
 
 	int getDotCount();
@@ -45,5 +47,7 @@ public:
 	const Contour & according(const Contour & contour) const;
 
 	Contours3d  disparity(const Contours & contours);
+
+	Contours diviate(const int dx, const int dy) const;
 };
 #endif
