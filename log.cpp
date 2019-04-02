@@ -145,3 +145,8 @@ FileStorage* Log::openYmlWrite(const int name){
 	return openYmlWrite(ss.str().c_str());
 
 }
+
+void Log::releaseAndDelete(FileStorage * fs){
+	fs->release();
+	delete fs;
+}

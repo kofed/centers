@@ -43,7 +43,7 @@ public:
 	class Iterator{
 		private:
 			vector<Point>::const_iterator it;
-			const vector<Point>::const_iterator end;
+			vector<Point>::const_iterator end;
 			const Contour & contour;
 			float tg1, tg2;
 			bool tgCondition(const float tg) const;

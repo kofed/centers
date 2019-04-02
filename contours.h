@@ -33,10 +33,10 @@ public:
 
 	string getYmlName() const;
 
-	Contours(const Mat & image, int _minIntencity,
-			int _maxIntencity, const Contours* refContours);
+	Contours(const Mat & image, const int _minIntencity,
+			const int _maxIntencity, const Contours* refContours);
 
-	Contours(const list<Contour> & _lContours);
+	Contours(const list<Contour> & _lContours, const int _minIntencity, const int _maxIntencity);
 
 	void draw(Mat & drawing);
 
@@ -46,7 +46,7 @@ public:
 
 	const Contour & according(const Contour & contour) const;
 
-	Contours3d  disparity(const Contours & contours);
+	Contours3d  disparity(const Contours & contours) const;
 
 	Contours diviate(const int dx, const int dy) const;
 };

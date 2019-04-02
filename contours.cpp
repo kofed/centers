@@ -2,11 +2,12 @@
 #include "contours3d.h"
 #include "log_k.h"
 
-Contours::Contours(const list<Contour> & _lContours):lContours(_lContours){
+Contours::Contours(const list<Contour> & _lContours, const int _minIntencity, const int _maxIntencity)
+	:lContours(_lContours), minIntencity(_minIntencity), maxIntencity(_minIntencity){
 
 }
 
-Contours::Contours(const Mat & _image, int _minIntencity, int _maxIntencity,
+Contours::Contours(const Mat & _image, const int _minIntencity, const int _maxIntencity,
 		const Contours* refContours)
 		:image(_image), minIntencity(_minIntencity), maxIntencity(_maxIntencity){
 	Log::LOG->logStart(2, "contours");
@@ -104,7 +105,7 @@ const Contour & Contours::according(const Contour & contour) const {
 	return *itAcc;
 }
 
-Contours3d Contours::disparity(const Contours & contours) {
+Contours3d Contours::disparity(const Contours & contours) const{
 	vector<Contour3d> disparities;
 	for(auto it = lContours.begin(); it != lContours.end(); ++it){
 		Contour accContour = contours.according(*it);
@@ -113,10 +114,10 @@ Contours3d Contours::disparity(const Contours & contours) {
 	return Contours3d(disparities);
 }
 
-Contours Contours::diviate(const int dx, const int dy){
+Contours Contours::diviate(const int dx, const int dy) const{
 	list<Contour> divContours;	
 	for(auto contour : lContours){
 		divContours.push_back(contour.diviate(dx, dy));
 	}
-	return Contours(divContours);
+	return Contours(divContours, minIntencity, maxIntencity);
 }

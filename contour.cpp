@@ -104,8 +104,8 @@ float Contour::Iterator::tg() const{
 Contour Contour::diviate(const int dx, const int dy){
 	vector<Point> diviated;
 
-	for_each(points.begin(), points.end(), [](Point const& p){
+	for(auto p : points){
 		diviated.push_back(Point(p.x + dx, p.y + dy));	
-	});
+	};
 	return Contour(diviated);
 }

@@ -13,6 +13,7 @@
 #include <iostream>
 #include "fframe.h"
 #include "processor.h"
+#include "tests.h"
 
 using namespace cv;
 using namespace std;
@@ -45,11 +46,11 @@ int main(int argc, const char* argv[]) {
     if(!parser.get<String>(string("t")).empty()){
 	if(imagePath.empty()){
 		cout << "Для запуска тестов укажите путь файла с изображением" << endl;
-		return;
+		return 1;
 	}
-	Tests tests(processor, imagePath);
+	Tests tests(string(imagePath.c_str()));
 	tests.run();
-	return;
+	return 0;
     }
 
 
