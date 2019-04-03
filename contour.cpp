@@ -73,14 +73,15 @@ const Point Contour::Iterator::get(const float tg) const{
 }
 
 bool Contour::Iterator::next(const float tg){
-	if(tgCondition(tg)){
-		return true;
-	}else if(++it != end){
+	while(!tgCondition(tg)){
+		if(++it == end){
+			return false;
+		}
 		tg1 = tg2;
 		tg2 = contour.tg(*it);
-		return true;
 	}
-	return false;
+
+	return true;
 }
 
 bool Contour::Iterator::next(){
