@@ -18,6 +18,7 @@ void Tests::disparityTest(){
 	Log::LOG->setFolder(0, "test");
 	Log::LOG->setFolder(1, "disparity");
 	Mat image = imread(imagePath);		
+	cv::cvtColor(image, image, CV_BGR2GRAY);
 	
 	FFrame frame(image);
 	vector<Contours> left = frame.findContours();

@@ -41,7 +41,7 @@ Contour3d Contour::disparity(const Contour & contour) const {
 };
 
 float Contour::tg(const Point point) const {
-	return (point.y - center.y)/(point.x - center.x);
+	return ((float)(point.y - center.y))/((float)(point.x - center.x));
 }
 
 Contour::Iterator Contour::iterator() const{
@@ -75,8 +75,7 @@ const Point Contour::Iterator::get(const float tg) const{
 bool Contour::Iterator::next(const float tg){
 	if(tgCondition(tg)){
 		return true;
-	}else if(it + 1 != end){
-		++it;
+	}else if(++it != end){
 		tg1 = tg2;
 		tg2 = contour.tg(*it);
 		return true;
