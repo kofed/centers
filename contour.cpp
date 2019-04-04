@@ -18,9 +18,11 @@ bool Contour::equals(const Contour & ref) const{
 }
 
 void Contour::toYml(FileStorage & yml) const{
+	yml << "contour" << "[";
 	for(auto point : points){
-		yml << point;
+		yml << "{:" << "point" << point << "}";
 	} 
+	yml << "]";
 }
 
 double Contour::distToCenter(const Point point) const{
@@ -86,8 +88,7 @@ bool Contour::Iterator::next(const float tg){
 }
 
 bool Contour::Iterator::next(){
-	++it;
-	if(it == end){
+	if(++it > end){
 		return false;
 	}
 

@@ -12,12 +12,13 @@ class Contours3d{
 private:
 	vector<Contour3d> vContours;
 
+	int minIntencity;
 public:
  	Contours3d(const Contours & contours2d, const int h);
 
-	Contours3d(const vector<Contour3d> & _vContours);
+	Contours3d(const vector<Contour3d> & _vContours, const int _minIntencity);
 
-	void toYml(FileStorage & yml) const;
+	void toYml() const;
 };
 
 #endif

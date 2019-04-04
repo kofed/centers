@@ -49,5 +49,7 @@ public:
 	Contours3d  disparity(const Contours & contours) const;
 
 	Contours diviate(const int dx, const int dy) const;
+
+	void toYml();
 };
 #endif

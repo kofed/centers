@@ -1,6 +1,6 @@
 #include "contours.h"
 #include "tests.h"
-#include "log_k.h"
+#include "log.h"
 #include "fframe.h"
 #include "contours3d.h"
 
@@ -30,8 +30,23 @@ void Tests::disparityTest(){
 
 		right.push_back(left[i].diviate(i, 4*i)); 
 		FileStorage* yml = Log::LOG->openYmlWrite(i);
-		disparities.push_back(left[i].disparity(right));
+		disparities.push_back(left[i].disparity(right[i]));
 		Log::LOG->releaseAndDelete(yml);
 	}
-	
+
+	Log::LOG->setFolder(2, "left");
+	for(auto c : left){
+		c.toYml();
+	}
+
+
+	Log::LOG->setFolder(2, "right");
+	for(auto c : right){
+		c.toYml();
+	}
+
+	Log::LOG->setFolder(2, "disparity");
+	for(auto c : disparities){
+		c.toYml();
+	}
 }

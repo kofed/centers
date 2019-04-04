@@ -1,6 +1,6 @@
 #include "contours.h"
 #include "contours3d.h"
-#include "log_k.h"
+#include "log.h"
 
 Contours::Contours(const list<Contour> & _lContours, const int _minIntencity, const int _maxIntencity)
 	:lContours(_lContours), minIntencity(_minIntencity), maxIntencity(_minIntencity){
@@ -120,4 +120,12 @@ Contours Contours::diviate(const int dx, const int dy) const{
 		divContours.push_back(contour.diviate(dx, dy));
 	}
 	return Contours(divContours, minIntencity, maxIntencity);
+}
+
+void Contours::toYml(){
+	FileStorage* yml = Log::LOG->openYmlWrite(minIntencity);
+	for(auto contour : lContours){
+		contour.toYml(*yml);
+	}
+	Log::LOG->releaseAndDelete(yml);
 }

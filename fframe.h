@@ -1,17 +1,10 @@
-/*
- * centers.h
- *
- *  Created on: Oct 14, 2018
- *      Author: c
- */
-
-#ifndef CENTERS_H_
-#define CENTERS_H_
+#ifndef FFRAME_H_
+#define FFRAME_H_
 
 #include <vector>
 #include <opencv2/opencv.hpp>
 #include <chrono>
-#include "log_k.h"
+#include "log.h"
 #include "contours.h"
 
 using namespace cv;
@@ -41,4 +34,4 @@ public:
 
 
 
-#endif /* CENTERS_H_ */
+#endif
