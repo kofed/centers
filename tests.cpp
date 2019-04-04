@@ -24,10 +24,14 @@ void Tests::disparityTest(){
 	vector<Contours> left = frame.findContours();
 
 	vector<Contours> right;
+	vector<Contours3d> disparities;
+	Log::LOG->setFolder(2, "disparity");
 	for(int i = 0;i<10; ++i ){
-		Contours right = left[i].diviate(i, 4*i); 
+
+		right.push_back(left[i].diviate(i, 4*i)); 
 		FileStorage* yml = Log::LOG->openYmlWrite(i);
-		left[i].disparity(right).toYml(*yml);
+		disparities.push_back(left[i].disparity(right));
 		Log::LOG->releaseAndDelete(yml);
 	}
+	
 }
