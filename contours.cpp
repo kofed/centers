@@ -111,7 +111,7 @@ Contours3d Contours::disparity(const Contours & contours) const{
 		Contour accContour = contours.according(*it);
 		disparities.push_back(accContour.disparity(*it));
 	}
-	return Contours3d(disparities);
+	return Contours3d(disparities, minIntencity);
 }
 
 Contours Contours::diviate(const int dx, const int dy) const{

@@ -50,7 +50,7 @@ Contour::Iterator Contour::iterator() const{
 	return Iterator(*this);
 }
 
-Contour::Iterator::Iterator(const Contour & _contour):contour(_contour), end(contour.points.end()){
+Contour::Iterator::Iterator(const Contour & _contour):contour(_contour), end(_contour.points.end()){
 	it = _contour.points.begin();
 	if(it == end){
 		throw runtime_error("Создание итератора для пустого контура");
@@ -77,7 +77,7 @@ const Point Contour::Iterator::get(const float tg) const{
 bool Contour::Iterator::next(const float tg){
 	while(!tgCondition(tg)){
 
-		if(++it > end){
+		if(++it > contour.points.end()){
 			return false;
 		}
 		tg1 = tg2;
@@ -88,7 +88,7 @@ bool Contour::Iterator::next(const float tg){
 }
 
 bool Contour::Iterator::next(){
-	if(++it > end){
+	if(++it > contour.points.end()){
 		return false;
 	}
 
@@ -96,7 +96,7 @@ bool Contour::Iterator::next(){
 }
 
 bool Contour::Iterator::tgCondition(const float tg) const{
-	return (tg2 > tg && tg < tg1) || (tg2 < tg && tg > tg1);
+	return (tg2 > tg && tg > tg1) || (tg2 < tg && tg < tg1);
 }
 
 float Contour::Iterator::tg() const{
