@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "opencv2/opencv.hpp"
 #include "contour3d.h"
+#include "log.h"
 
 Contour::Contour(vector<Point> & _points):points(_points){
 	Moments moments = cv::moments( points, false );
@@ -75,7 +76,12 @@ const Point Contour::Iterator::get(const float tg) const{
 }
 
 bool Contour::Iterator::next(const float tg){
+
+
+		*tgLog << "tg" << tg << "tg1" << tg1 << "tg2" << tg2;
+
 	while(!tgCondition(tg)){
+		*tgLog << "tg" << tg << "tg1" << tg1 << "tg2" << tg2;
 
 		if(++it > contour.points.end()){
 			return false;
@@ -96,11 +102,15 @@ bool Contour::Iterator::next(){
 }
 
 bool Contour::Iterator::tgCondition(const float tg) const{
-	return (tg2 > tg && tg > tg1) || (tg2 < tg && tg < tg1);
+	return (tg2 + 0.1  > tg && tg > tg1 - 0.1) || (tg2 - 0.1 < tg && tg < tg1 + 0.1 );
 }
 
 float Contour::Iterator::tg() const{
 	return contour.tg(*it);
+}
+
+Contour::Iterator::~Iterator(){
+	Log::LOG->releaseAndDelete(tgLog);
 }
 
 Contour Contour::diviate(const int dx, const int dy){

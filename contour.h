@@ -3,6 +3,7 @@
 
 #include <opencv2/opencv.hpp>
 #include <vector>
+#include "log.h"
 
 using namespace std;
 using namespace cv;
@@ -12,6 +13,7 @@ class Contour3d;
 class Contour{
 private:
 	vector<Point> points;
+
 
 public:
 	Point center;
@@ -47,8 +49,10 @@ public:
 			const Contour & contour;
 			float tg1, tg2;
 			bool tgCondition(const float tg) const;
+	FileStorage * tgLog = Log::LOG->openYmlWrite("tg");
 		public:
 			Iterator(const Contour & _contour);
+			~Iterator();
 			bool next(const float tg);
 			bool next();
 			const Point get() const;
