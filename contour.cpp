@@ -58,6 +58,12 @@ Contour::Iterator::Iterator(const Contour & _contour):contour(_contour), end(_co
 	}
 	tg2 = contour.tg(*it);
 	tg1 = 0;
+	
+	stringstream name;
+	name << it->x << "-" << it->y;
+
+	tgLog = Log::LOG->openYmlWrite(name.str());
+	*tgLog << "tg" << "[";
 }
 
 const Point Contour::Iterator::get() const{
@@ -77,24 +83,25 @@ const Point Contour::Iterator::get(const float tg) const{
 
 bool Contour::Iterator::next(const float tg){
 
+		*tgLog << "{:" << "tg" << tg << "tg1" << tg1 << "tg2" << tg2 << "}";
 
-		*tgLog << "tg" << tg << "tg1" << tg1 << "tg2" << tg2;
 
 	while(!tgCondition(tg)){
-		*tgLog << "tg" << tg << "tg1" << tg1 << "tg2" << tg2;
 
-		if(++it > contour.points.end()){
+
+		if(++it == contour.points.end()){
 			return false;
 		}
 		tg1 = tg2;
 		tg2 = contour.tg(*it);
+		*tgLog << "{:" << "tg" << tg << "tg1" << tg1 << "tg2" << tg2 << "}";
 	}
 
 	return true;
 }
 
 bool Contour::Iterator::next(){
-	if(++it > contour.points.end()){
+	if(++it == contour.points.end()){
 		return false;
 	}
 
@@ -102,7 +109,7 @@ bool Contour::Iterator::next(){
 }
 
 bool Contour::Iterator::tgCondition(const float tg) const{
-	return (tg2 + 0.1  > tg && tg > tg1 - 0.1) || (tg2 - 0.1 < tg && tg < tg1 + 0.1 );
+	return (tg2 + 0.001  > tg && tg > tg1 - 0.001) || (tg2 - 0.001 < tg && tg < tg1 + 0.001 );
 }
 
 float Contour::Iterator::tg() const{

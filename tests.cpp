@@ -30,7 +30,7 @@ void Tests::disparityTest(){
 
 		right.push_back(left[i].diviate(i, 4*i)); 
 		FileStorage* yml = Log::LOG->openYmlWrite(i);
-		disparities.push_back(left[i].disparity(right[i]));
+		disparities.push_back(right[i].disparity(left[i]));
 		Log::LOG->releaseAndDelete(yml);
 	}
 

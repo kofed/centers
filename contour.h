@@ -49,7 +49,7 @@ public:
 			const Contour & contour;
 			float tg1, tg2;
 			bool tgCondition(const float tg) const;
-	FileStorage * tgLog = Log::LOG->openYmlWrite("tg");
+			FileStorage * tgLog;
 		public:
 			Iterator(const Contour & _contour);
 			~Iterator();
