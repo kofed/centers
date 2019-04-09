@@ -42,7 +42,9 @@ public:
 
 	float angle(const Point point) const;
 
-	Contour diviate(const int dx, const int dy);
+	Contour diviate(const int dx, const int dy) const;
+
+	Contour removeNullPoints() const;
 
 	class Iterator{
 		private:

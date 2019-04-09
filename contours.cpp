@@ -108,8 +108,8 @@ const Contour & Contours::according(const Contour & contour) const {
 Contours3d Contours::disparity(const Contours & contours) const{
 	vector<Contour3d> disparities;
 	for(auto it = lContours.begin(); it != lContours.end(); ++it){
-		Contour accContour = contours.according(*it);
-		disparities.push_back(accContour.disparity(*it));
+		Contour accContour = contours.according(*it).removeNullPoints();
+		disparities.push_back(accContour.disparity(it->removeNullPoints()));
 	}
 	return Contours3d(disparities, minIntencity);
 }

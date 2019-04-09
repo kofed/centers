@@ -70,11 +70,14 @@ Contour::Iterator::Iterator(const Contour & _contour):contour(_contour), end(_co
 	if(it == end){
 		throw runtime_error("Создание итератора для пустого контура");
 	}
-	angle2 = contour.angle(*it);
-	angle1 = 0;
+	angle1 = contour.angle(*it);
+	angle2 = contour.angle(*++it);
+	if(it == end){
+			throw runtime_error("Создание итератора для пустого контура");
+		}
 	
 	stringstream name;
-	name << it->x << "-" << it->y;
+	name << "contour-" << it->x << "-" << it->y << "-angles";
 
 	tgLog = Log::LOG->openYmlWrite(name.str());
 
@@ -125,7 +128,8 @@ bool Contour::Iterator::next(){
 }
 
 bool Contour::Iterator::angleCondition(const float angle) const{
-	return (angle2 + 0.001  > angle && angle > angle1 - 0.001) || (angle2 - 0.001 < angle && angle < angle1 + 0.001 );
+	int GAP = 0.001;
+	return (angle2 + GAP  > angle && angle > angle1 - GAP) || (angle2 - GAP < angle && angle < angle1 + GAP );
 }
 
 float Contour::Iterator::tg() const{
@@ -140,11 +144,20 @@ Contour::Iterator::~Iterator(){
 	Log::LOG->releaseAndDelete(tgLog);
 }
 
-Contour Contour::diviate(const int dx, const int dy){
+Contour Contour::diviate(const int dx, const int dy) const{
 	vector<Point> diviated;
 
 	for(auto p : points){
 		diviated.push_back(Point(p.x + dx, p.y + dy));	
 	};
 	return Contour(diviated);
+}
+
+Contour Contour::removeNullPoints() const{
+	vector<Point> nonNullPoints;
+	for(auto p : points){
+		if(p.x > 0 && p.y > 0)
+			nonNullPoints.push_back(p);
+	}
+	return Contour(nonNullPoints);
 }
