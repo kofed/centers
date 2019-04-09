@@ -19,6 +19,7 @@ bool Contour::equals(const Contour & ref) const{
 }
 
 void Contour::toYml(FileStorage & yml) const{
+	yml << "center" << center;
 	yml << "contour" << "[";
 	for(auto point : points){
 		yml << "{:" << "point" << point << "}";
@@ -35,16 +36,29 @@ Contour3d Contour::disparity(const Contour & contour) const {
 	auto it = iterator();
 	auto itAcc = contour.iterator();
 
-	while(it.next() && itAcc.next(it.tg())){
-		int dx = it.get().x - itAcc.get(it.tg()).x;
+	do{
+		int dx = it.get().x - itAcc.get(it.angle()).x;
 		disparityPoints.push_back(Point3_<int>(it.get().x, it.get().y, dx));
 	}
+	while(it.next() && itAcc.next(it.angle()));
 	
 	return Contour3d(disparityPoints);
 };
 
 float Contour::tg(const Point point) const {
 	return ((float)(point.y - center.y))/((float)(point.x - center.x));
+}
+
+float Contour::angle(const Point point)const{
+	float dy = point.y - center.y;
+	float dx = point.x - center.x;
+
+	if(dx < 0){
+		return 3.14f + atan(dy/dx);
+	}else{
+		return atan(dy/dx);
+	}
+	
 }
 
 Contour::Iterator Contour::iterator() const{
@@ -56,14 +70,16 @@ Contour::Iterator::Iterator(const Contour & _contour):contour(_contour), end(_co
 	if(it == end){
 		throw runtime_error("Создание итератора для пустого контура");
 	}
-	tg2 = contour.tg(*it);
-	tg1 = 0;
+	angle2 = contour.angle(*it);
+	angle1 = 0;
 	
 	stringstream name;
 	name << it->x << "-" << it->y;
 
 	tgLog = Log::LOG->openYmlWrite(name.str());
-	*tgLog << "tg" << "[";
+
+	*tgLog << "angle" << "[";
+
 }
 
 const Point Contour::Iterator::get() const{
@@ -73,28 +89,28 @@ const Point Contour::Iterator::get() const{
 	return *it;
 }
 
-const Point Contour::Iterator::get(const float tg) const{
-	float k = (tg - tg1)/(tg2 - tg1);
+const Point Contour::Iterator::get(const float angle) const{
+	float k = (angle - angle1)/(angle2 - angle1);
 	float dx = k * (it->x - (it-1)->x);
 	float dy = k * (it->y - (it-1)->y);
 
 	return Point((int)(it->x + dx), (int)(it->y + dy));
 }
 
-bool Contour::Iterator::next(const float tg){
+bool Contour::Iterator::next(const float angle){
 
-		*tgLog << "{:" << "tg" << tg << "tg1" << tg1 << "tg2" << tg2 << "}";
+		*tgLog << "{:" << "angle" << angle << "angle1" << angle1 << "angle2" << angle2 << "}";
 
 
-	while(!tgCondition(tg)){
+	while(!angleCondition(angle)){
 
 
 		if(++it == contour.points.end()){
 			return false;
 		}
-		tg1 = tg2;
-		tg2 = contour.tg(*it);
-		*tgLog << "{:" << "tg" << tg << "tg1" << tg1 << "tg2" << tg2 << "}";
+		angle1 = angle2;
+		angle2 = contour.angle(*it);
+		*tgLog << "{:" << "angle" << angle << "angle1" << angle1 << "angle2" << angle2 << "}";
 	}
 
 	return true;
@@ -108,12 +124,16 @@ bool Contour::Iterator::next(){
 	return true;
 }
 
-bool Contour::Iterator::tgCondition(const float tg) const{
-	return (tg2 + 0.001  > tg && tg > tg1 - 0.001) || (tg2 - 0.001 < tg && tg < tg1 + 0.001 );
+bool Contour::Iterator::angleCondition(const float angle) const{
+	return (angle2 + 0.001  > angle && angle > angle1 - 0.001) || (angle2 - 0.001 < angle && angle < angle1 + 0.001 );
 }
 
 float Contour::Iterator::tg() const{
 	return contour.tg(*it);
+}
+
+float Contour::Iterator::angle() const{
+	return contour.angle(*it);
 }
 
 Contour::Iterator::~Iterator(){

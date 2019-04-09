@@ -40,6 +40,8 @@ public:
 
 	float tg(const Point point) const;
 
+	float angle(const Point point) const;
+
 	Contour diviate(const int dx, const int dy);
 
 	class Iterator{
@@ -47,8 +49,8 @@ public:
 			vector<Point>::const_iterator it;
 			vector<Point>::const_iterator end;
 			const Contour & contour;
-			float tg1, tg2;
-			bool tgCondition(const float tg) const;
+			float angle1, angle2;
+			bool angleCondition(const float tg) const;
 			FileStorage * tgLog;
 		public:
 			Iterator(const Contour & _contour);
@@ -58,6 +60,7 @@ public:
 			const Point get() const;
 			const Point get(const float tg) const;
 			float tg() const;
+			float angle() const;
 	};
 
 	Iterator iterator() const;
