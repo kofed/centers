@@ -53,7 +53,7 @@ float Contour::angle(const Point point)const{
 	float dy = point.y - center.y;
 	float dx = point.x - center.x;
 
-	if(dx < 0){
+	if(dy < 0){
 		return 3.14f + atan(dy/dx);
 	}else{
 		return atan(dy/dx);
@@ -71,13 +71,14 @@ Contour::Iterator::Iterator(const Contour & _contour):contour(_contour), end(_co
 		throw runtime_error("Создание итератора для пустого контура");
 	}
 	angle1 = contour.angle(*it);
+	stringstream name;
+	name << "contour-" << it->x << "-" << it->y << "-angles";
 	angle2 = contour.angle(*++it);
 	if(it == end){
 			throw runtime_error("Создание итератора для пустого контура");
 		}
 	
-	stringstream name;
-	name << "contour-" << it->x << "-" << it->y << "-angles";
+
 
 	tgLog = Log::LOG->openYmlWrite(name.str());
 
@@ -102,10 +103,11 @@ const Point Contour::Iterator::get(const float angle) const{
 
 bool Contour::Iterator::next(const float angle){
 
-		*tgLog << "{:" << "angle" << angle << "angle1" << angle1 << "angle2" << angle2 << "}";
+		*tgLog << "{:" << "point" << *it << "angle" << angle << "angle1" << angle1 << "angle2" << angle2 << "}";
 
 
 	while(!angleCondition(angle)){
+
 
 
 		if(++it == contour.points.end()){
@@ -113,7 +115,8 @@ bool Contour::Iterator::next(const float angle){
 		}
 		angle1 = angle2;
 		angle2 = contour.angle(*it);
-		*tgLog << "{:" << "angle" << angle << "angle1" << angle1 << "angle2" << angle2 << "}";
+
+		*tgLog << "{:" << "point" << *it << "angle" << angle << "angle1" << angle1 << "angle2" << angle2 << "}";
 	}
 
 	return true;
@@ -128,7 +131,7 @@ bool Contour::Iterator::next(){
 }
 
 bool Contour::Iterator::angleCondition(const float angle) const{
-	int GAP = 0.001;
+	float GAP = 0.0003f;
 	return (angle2 + GAP  > angle && angle > angle1 - GAP) || (angle2 - GAP < angle && angle < angle1 + GAP );
 }
 
