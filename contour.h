@@ -14,7 +14,13 @@ class Contour{
 private:
 	vector<Point> points;
 
-
+	map<float, Point> anglePointMap;
+	
+	float tg(const Point point) const;
+	
+	float angle(const Point point) const;
+	
+	Point getPoint(const float angle) const;
 public:
 	Point center;
 	
@@ -36,11 +42,7 @@ public:
 
 	Contour3d disparity(const Contour & contour) const;
 
-	Point getPoint(const float radian);
-
-	float tg(const Point point) const;
-
-	float angle(const Point point) const;
+	Point getPoint(const float angle);
 
 	Contour diviate(const int dx, const int dy) const;
 

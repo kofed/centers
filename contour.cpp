@@ -7,7 +7,9 @@
 Contour::Contour(vector<Point> & _points):points(_points){
 	Moments moments = cv::moments( points, false );
 	center = Point( moments.m10/moments.m00 , moments.m01/moments.m00 );
-
+	for(auto p : points){
+		anglePointMap[angle(p)] = p;
+	}
 }
 
 int Contour::size(){
@@ -36,12 +38,21 @@ Contour3d Contour::disparity(const Contour & contour) const {
 	auto it = iterator();
 	auto itAcc = contour.iterator();
 
-	do{
+/*	do{
 		int dx = it.get().x - itAcc.get(it.angle()).x;
 		disparityPoints.push_back(Point3_<int>(it.get().x, it.get().y, dx));
 	}
 	while(it.next() && itAcc.next(it.angle()));
-	
+*/
+
+	for(auto _p : contour.points){
+		Point p = getPoint(contour.angle(_p));
+		auto dx = _p.x - p.x;
+		if(dx > 500 || dx < -500){
+			throw runtime_error("dx too big");
+		}
+		disparityPoints.push_back(Point3_<int>(p.x, p.y, dx));
+	}	
 	return Contour3d(disparityPoints);
 };
 
@@ -50,13 +61,13 @@ float Contour::tg(const Point point) const {
 }
 
 float Contour::angle(const Point point)const{
-	float dy = point.y - center.y;
-	float dx = point.x - center.x;
+	double dy = static_cast<double>(point.y - center.y);
+	double dx = static_cast<double>(point.x - center.x);
 
 	if(dy < 0){
-		return 3.14f + atan(dy/dx);
+		return 3.14f + static_cast<float> (atan(dy/dx));
 	}else{
-		return atan(dy/dx);
+		return static_cast<float> (atan(dy/dx));
 	}
 	
 }
@@ -77,8 +88,6 @@ Contour::Iterator::Iterator(const Contour & _contour):contour(_contour), end(_co
 	if(it == end){
 			throw runtime_error("Создание итератора для пустого контура");
 		}
-	
-
 
 	tgLog = Log::LOG->openYmlWrite(name.str());
 
@@ -107,9 +116,6 @@ bool Contour::Iterator::next(const float angle){
 
 
 	while(!angleCondition(angle)){
-
-
-
 		if(++it == contour.points.end()){
 			return false;
 		}
@@ -163,4 +169,27 @@ Contour Contour::removeNullPoints() const{
 			nonNullPoints.push_back(p);
 	}
 	return Contour(nonNullPoints);
+}
+
+Point Contour::getPoint(const float angle) const {
+	auto itUp = anglePointMap.upper_bound(angle);
+	auto itLow = anglePointMap.lower_bound(angle);
+
+	if(itUp == anglePointMap.end()){
+		itUp = anglePointMap.begin();
+	}
+
+	if(itLow == anglePointMap.end()){
+		throw runtime_error("it is end");
+	}
+
+	float k = (angle - itLow->first)/(itUp->first - itLow->first);
+	float dx = k * (itUp->second.x - itLow->second.x);
+	float dy = k * (itUp->second.y - itLow->second.y);
+
+	if(dx > 500 || dy > 500 || dx < -500 || dy < -500){
+		throw runtime_error("dx, dy too big");
+	}
+
+	return Point((int)(itLow->second.x + dx), (int)(itLow->second.y + dy));
 }
