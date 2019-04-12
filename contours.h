@@ -11,32 +11,33 @@ class Contours3d;
 
 class Contours{
 private:
+	const int MIN_CONTOUR_SIZE = 5;
+
 	Mat image;
 
 	list<Contour> lContours;
 
 	vector<Vec4i> hierarchy;
 
-	vector<Point> centers;
+	vector<CPoint> centers;
 
 	vector<vector<Point>> vContours;
 
-	vector<Point> getCenters();
+	vector<CPoint> getCenters();
 
 	void filtRepeatedContours(const Contours & ref);
 
-	const int minIntencity;
+	const int intencity;
 
-	const int maxIntencity;
 public:
 	const list<Contour> & getLContours() const {return lContours;}
 
 	string getYmlName() const;
 
-	Contours(const Mat & image, const int _minIntencity,
-			const int _maxIntencity, const Contours* refContours);
+	Contours(const Mat & image, const int _intencity,
+			const Contours* refContours);
 
-	Contours(const list<Contour> & _lContours, const int _minIntencity, const int _maxIntencity);
+	Contours(const list<Contour> & _lContours, const int _intencity);
 
 	void draw(Mat & drawing);
 

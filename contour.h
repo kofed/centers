@@ -10,23 +10,31 @@ using namespace cv;
 
 class Contour3d;
 
+typedef Point2f CPoint;
+
 class Contour{
 private:
-	vector<Point> points;
+	vector<CPoint> points;
 
-	map<float, Point> anglePointMap;
+	map<float, CPoint> anglePointMap;
 	
-	float tg(const Point point) const;
+	float tg(const CPoint point) const;
 	
-	float angle(const Point point) const;
+	float angle(const CPoint point) const;
 	
-	Point getPoint(const float angle) const;
+	CPoint getPoint(const float angle) const;
+
+	void init();
 public:
-	Point center;
+	static vector<CPoint> point2CPoint(const vector<Point> & points);
+
+	CPoint center;
 	
-	const vector<Point> &  getPoints()const {return points;}	
+	const vector<CPoint> &  getPoints()const {return points;}	
 
 	Contour(vector<Point> & _points);
+
+	Contour(vector<CPoint> & _points);
 
 	int size();
 
@@ -38,11 +46,11 @@ public:
 
 	void toYml(FileStorage & yml) const;
 
-	double distToCenter(const Point point) const;
+	double distToCenter(const CPoint point) const;
 
 	Contour3d disparity(const Contour & contour) const;
 
-	Point getPoint(const float angle);
+	CPoint getPoint(const float angle);
 
 	Contour diviate(const int dx, const int dy) const;
 
@@ -50,8 +58,8 @@ public:
 
 	class Iterator{
 		private:
-			vector<Point>::const_iterator it;
-			vector<Point>::const_iterator end;
+			vector<CPoint>::const_iterator it;
+			vector<CPoint>::const_iterator end;
 			const Contour & contour;
 			float angle1, angle2;
 			bool angleCondition(const float tg) const;
@@ -61,8 +69,8 @@ public:
 			~Iterator();
 			bool next(const float tg);
 			bool next();
-			const Point get() const;
-			const Point get(const float tg) const;
+			const CPoint get() const;
+			const CPoint get(const float tg) const;
 			float tg() const;
 			float angle() const;
 	};

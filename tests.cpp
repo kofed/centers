@@ -29,9 +29,7 @@ void Tests::disparityTest(){
 	for(int i = 0;i<10; ++i ){
 
 		right.push_back(left[i].diviate(i, 4*i)); 
-		FileStorage* yml = Log::LOG->openYmlWrite(i);
 		disparities.push_back(right[i].disparity(left[i]));
-		Log::LOG->releaseAndDelete(yml);
 	}
 
 	Log::LOG->setFolder(2, "left");

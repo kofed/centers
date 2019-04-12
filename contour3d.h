@@ -6,13 +6,15 @@
 
 using namespace cv;
 
+typedef Point3_<float> CPoint3;
+
 class Contour3d{
 private:
-	std::vector<Point3_<int>> points;
+	std::vector<CPoint3> points;
 public:
 	Contour3d(const Contour &  contour2d, int h);
 
-	Contour3d(const vector<Point3_<int>> & _points);
+	Contour3d(const vector<CPoint3> & _points);
 
 	void toYml(FileStorage & yml) const;
 };

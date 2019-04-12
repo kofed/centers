@@ -30,10 +30,10 @@ vector<Contours> & FFrame::findContours(){
 		Contours* prevContours = NULL;
 		for(int i = 0; i < SPLIT_NUMBER; ++i){
 			Mat m;
-			inRange(blurred, INTENCITY_STEP*i, INTENCITY_STEP * (i+1), m);
+			inRange(blurred, INTENCITY_STEP*i, MAX_INTENCITY, m);
 			Log::LOG->writeImage(INTENCITY_STEP*i, m);
 			splittedContours.push_back(
-					Contours(m, INTENCITY_STEP*i, INTENCITY_STEP * (i+1), prevContours));
+					Contours(m, INTENCITY_STEP*i, prevContours));
 			prevContours = &(splittedContours.at(i));
 		}
 

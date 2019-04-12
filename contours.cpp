@@ -2,28 +2,30 @@
 #include "contours3d.h"
 #include "log.h"
 
-Contours::Contours(const list<Contour> & _lContours, const int _minIntencity, const int _maxIntencity)
-	:lContours(_lContours), minIntencity(_minIntencity), maxIntencity(_minIntencity){
+Contours::Contours(const list<Contour> & _lContours, const int _intencity)
+	:lContours(_lContours), intencity(_intencity){
 
 }
 
-Contours::Contours(const Mat & _image, const int _minIntencity, const int _maxIntencity,
-		const Contours* refContours)
-		:image(_image), minIntencity(_minIntencity), maxIntencity(_maxIntencity){
+Contours::Contours(const Mat & _image, const int _intencity, const Contours* refContours)
+		:image(_image), intencity(_intencity){
 	Log::LOG->logStart(2, "contours");
 	findContours( image, vContours, hierarchy, CV_RETR_CCOMP, CV_CHAIN_APPROX_SIMPLE );
 	for(auto vPoint : vContours){
+		if(vPoint.size() < MIN_CONTOUR_SIZE){
+			continue;
+		}
 		lContours.push_back(Contour(vPoint));
 	}
 
 	if(Log::LOG->debug){
 		Mat drawing = Mat::zeros( image.size(), CV_8UC3 );
 		draw(drawing);
-		Log::LOG->writeImage(minIntencity, drawing);
+		Log::LOG->writeImage(intencity, drawing);
 	}
 
-	if(refContours != NULL)
-		filtRepeatedContours(*refContours);
+//	if(refContours != NULL)
+//		filtRepeatedContours(*refContours);
 	Log::LOG->logFinish(2, "contours");
 }
 
@@ -37,8 +39,8 @@ void Contours::draw(Mat & drawing){
 	}
 }
 
-vector<Point> Contours::getCenters(){
-	vector<Point> centers;
+vector<CPoint> Contours::getCenters(){
+	vector<CPoint> centers;
 
 	for(auto contour : lContours){
 		centers.push_back(contour.center);
@@ -57,7 +59,7 @@ int Contours::getDotCount(){
 void Contours::writeCentersToFile(){
 
 	Log::LOG->setFolder(2, "centers");
-	ofstream* centersFile = Log::LOG->openTxt(minIntencity);
+	ofstream* centersFile = Log::LOG->openTxt(intencity);
 
 	if(Log::LOG->debug){
 		Mat drawing = Mat::zeros( image.size(), CV_8UC3 );
@@ -65,7 +67,7 @@ void Contours::writeCentersToFile(){
 		for(Contour contour : lContours){
 			circle( drawing, contour.center, 4, Scalar(0, 0, 255), -1, 8, 0 );
 		}
-		Log::LOG->writeImage( minIntencity, drawing);
+		Log::LOG->writeImage( intencity, drawing);
 	}
 
 	for(Contour contour : lContours){
@@ -88,7 +90,7 @@ void Contours::filtRepeatedContours(const Contours & ref){
 string Contours::getYmlName() const {
 	stringstream ss;
 	ss << "_";
-	ss << minIntencity;
+	ss << intencity;
 	return ss.str();
 }
 
@@ -111,7 +113,7 @@ Contours3d Contours::disparity(const Contours & contours) const{
 		Contour accContour = contours.according(*it).removeNullPoints();
 		disparities.push_back(accContour.disparity(it->removeNullPoints()));
 	}
-	return Contours3d(disparities, minIntencity);
+	return Contours3d(disparities, intencity);
 }
 
 Contours Contours::diviate(const int dx, const int dy) const{
@@ -119,11 +121,11 @@ Contours Contours::diviate(const int dx, const int dy) const{
 	for(auto contour : lContours){
 		divContours.push_back(contour.diviate(dx, dy));
 	}
-	return Contours(divContours, minIntencity, maxIntencity);
+	return Contours(divContours, intencity);
 }
 
 void Contours::toYml(){
-	FileStorage* yml = Log::LOG->openYmlWrite(minIntencity);
+	FileStorage* yml = Log::LOG->openYmlWrite(intencity);
 	for(auto contour : lContours){
 		contour.toYml(*yml);
 	}

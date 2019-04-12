@@ -4,12 +4,29 @@
 #include "contour3d.h"
 #include "log.h"
 
-Contour::Contour(vector<Point> & _points):points(_points){
+Contour::Contour(vector<CPoint> & _points):points(_points){
+	init();
+}
+
+Contour::Contour(vector<Point> & _points){
+	points = point2CPoint(_points);
+	init();
+}
+
+void Contour::init(){
 	Moments moments = cv::moments( points, false );
-	center = Point( moments.m10/moments.m00 , moments.m01/moments.m00 );
+	center = CPoint( moments.m10/moments.m00 , moments.m01/moments.m00 );
 	for(auto p : points){
 		anglePointMap[angle(p)] = p;
 	}
+}
+
+vector<CPoint> Contour::point2CPoint(const vector<Point> & points){
+	vector<CPoint> cpoints;
+	for(auto p : points){
+		cpoints.push_back(CPoint(static_cast<int>(p.x), static_cast<int>(p.y) ));
+	}
+	return cpoints;
 }
 
 int Contour::size(){
@@ -29,38 +46,38 @@ void Contour::toYml(FileStorage & yml) const{
 	yml << "]";
 }
 
-double Contour::distToCenter(const Point point) const{
+double Contour::distToCenter(const CPoint point) const{
 	return sqrt(pow(center.x - point.x, 2.0) + pow(center.y - point.y, 2.0));
 };
 
 Contour3d Contour::disparity(const Contour & contour) const {
-	vector<Point3_<int>> disparityPoints;
+	vector<CPoint3> disparityPoints;
 	auto it = iterator();
 	auto itAcc = contour.iterator();
 
 /*	do{
 		int dx = it.get().x - itAcc.get(it.angle()).x;
-		disparityPoints.push_back(Point3_<int>(it.get().x, it.get().y, dx));
+		disparityPoints.push_back(CPoint3(it.get().x, it.get().y, dx));
 	}
 	while(it.next() && itAcc.next(it.angle()));
 */
 
 	for(auto _p : contour.points){
-		Point p = getPoint(contour.angle(_p));
+		CPoint p = getPoint(contour.angle(_p));
 		auto dx = _p.x - p.x;
-		if(dx > 500 || dx < -500){
+		/*if(dx > 500 || dx < -500){
 			throw runtime_error("dx too big");
-		}
-		disparityPoints.push_back(Point3_<int>(p.x, p.y, dx));
+		}*/
+		disparityPoints.push_back(CPoint3(p.x, p.y, dx));
 	}	
 	return Contour3d(disparityPoints);
 };
 
-float Contour::tg(const Point point) const {
+float Contour::tg(const CPoint point) const {
 	return ((float)(point.y - center.y))/((float)(point.x - center.x));
 }
 
-float Contour::angle(const Point point)const{
+float Contour::angle(const CPoint point)const{
 	double dy = static_cast<double>(point.y - center.y);
 	double dx = static_cast<double>(point.x - center.x);
 
@@ -95,14 +112,14 @@ Contour::Iterator::Iterator(const Contour & _contour):contour(_contour), end(_co
 
 }
 
-const Point Contour::Iterator::get() const{
+const CPoint Contour::Iterator::get() const{
 	if(it == end){
 		throw runtime_error("it == end");
 	}
 	return *it;
 }
 
-const Point Contour::Iterator::get(const float angle) const{
+const CPoint Contour::Iterator::get(const float angle) const{
 	float k = (angle - angle1)/(angle2 - angle1);
 	float dx = k * (it->x - (it-1)->x);
 	float dy = k * (it->y - (it-1)->y);
@@ -154,7 +171,7 @@ Contour::Iterator::~Iterator(){
 }
 
 Contour Contour::diviate(const int dx, const int dy) const{
-	vector<Point> diviated;
+	vector<CPoint> diviated;
 
 	for(auto p : points){
 		diviated.push_back(Point(p.x + dx, p.y + dy));	
@@ -163,7 +180,7 @@ Contour Contour::diviate(const int dx, const int dy) const{
 }
 
 Contour Contour::removeNullPoints() const{
-	vector<Point> nonNullPoints;
+	vector<CPoint> nonNullPoints;
 	for(auto p : points){
 		if(p.x > 0 && p.y > 0)
 			nonNullPoints.push_back(p);
@@ -171,7 +188,7 @@ Contour Contour::removeNullPoints() const{
 	return Contour(nonNullPoints);
 }
 
-Point Contour::getPoint(const float angle) const {
+CPoint Contour::getPoint(const float angle) const {
 	auto itUp = anglePointMap.upper_bound(angle);
 	auto itLow = anglePointMap.lower_bound(angle);
 
@@ -180,10 +197,15 @@ Point Contour::getPoint(const float angle) const {
 	}
 
 	if(itLow == anglePointMap.end()){
-		throw runtime_error("it is end");
+		itLow = anglePointMap.end();
+		--itLow;
 	}
 
-	float k = (angle - itLow->first)/(itUp->first - itLow->first);
+	float k = 0;
+	if(itUp->first != itLow->first){
+		k	= (angle - itLow->first)/(itUp->first - itLow->first);
+	}
+
 	float dx = k * (itUp->second.x - itLow->second.x);
 	float dy = k * (itUp->second.y - itLow->second.y);
 
@@ -191,5 +213,11 @@ Point Contour::getPoint(const float angle) const {
 		throw runtime_error("dx, dy too big");
 	}
 
-	return Point((int)(itLow->second.x + dx), (int)(itLow->second.y + dy));
+	CPoint p = CPoint(itLow->second.x + dx, itLow->second.y + dy);
+
+	if(p.x != p.x || p.y != p.y  || p.x > 500 || p.y > 500 || p.x < -500 || p.y < -500){
+			throw runtime_error("dx, dy too big");
+		}
+
+	return p;
 }
