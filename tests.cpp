@@ -28,7 +28,7 @@ void Tests::disparityTest(){
 	Log::LOG->setFolder(2, "disparity");
 	for(int i = 0;i<10; ++i ){
 
-		right.push_back(left[i].diviate(i, 4*i)); 
+		right.push_back(left[i].diviate(4*i, i));
 		disparities.push_back(right[i].disparity(left[i]));
 	}
 
