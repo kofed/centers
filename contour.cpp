@@ -16,9 +16,22 @@ Contour::Contour(vector<Point> & _points){
 void Contour::init(){
 	Moments moments = cv::moments( points, false );
 	center = CPoint( moments.m10/moments.m00 , moments.m01/moments.m00 );
+	
+	stringstream ss;
+	ss << "hash-" << center.x << "-" << center.y;
+	auto yml = Log::LOG->openYmlWrite(ss.str());
+	*yml << "x-y-hash" << "[";
 	for(auto p : points){
-		anglePointMap[angle(p)] = p;
+		anglePointMap[pointHash(p)] = p;
+		*yml << "{:" << "x" <<  p.x  << "y" << p.y << "hash" <<  pointHash(p) << "}";
 	}
+	*yml << "]";
+	Log::LOG->releaseAndDelete(yml);
+}
+
+float Contour::pointHash(const CPoint point) const {
+	float r = distToCenter(point);
+	return r*r + 10000.0f * angle(point);
 }
 
 vector<CPoint> Contour::point2CPoint(const vector<Point> & points){
@@ -62,8 +75,8 @@ Contour3d Contour::disparity(const Contour & contour) const {
 	while(it.next() && itAcc.next(it.angle()));
 */
 
-	for(auto _p : contour.points){
-		CPoint p = getPoint(contour.angle(_p));
+	for(auto p : contour.points){
+		CPoint _p = getPoint(contour.pointHash(p));
 		auto dx = _p.x - p.x;
 		/*if(dx > 500 || dx < -500){
 			throw runtime_error("dx too big");
@@ -188,9 +201,9 @@ Contour Contour::removeNullPoints() const{
 	return Contour(nonNullPoints);
 }
 
-CPoint Contour::getPoint(const float angle) const {
-	auto itUp = anglePointMap.upper_bound(angle);
-	auto itLow = anglePointMap.lower_bound(angle);
+CPoint Contour::getPoint(const float hash) const {
+	auto itUp = anglePointMap.upper_bound(hash);
+	auto itLow = anglePointMap.lower_bound(hash);
 
 	if(itUp == anglePointMap.end()){
 		itUp = anglePointMap.begin();
@@ -203,7 +216,7 @@ CPoint Contour::getPoint(const float angle) const {
 
 	float k = 0;
 	if(itUp->first != itLow->first){
-		k	= (angle - itLow->first)/(itUp->first - itLow->first);
+		k	= (hash - itLow->first)/(itUp->first - itLow->first);
 	}
 
 	float dx = k * (itUp->second.x - itLow->second.x);

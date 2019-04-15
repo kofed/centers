@@ -25,6 +25,8 @@ private:
 	CPoint getPoint(const float angle) const;
 
 	void init();
+
+	float pointHash(const CPoint point) const;
 public:
 	static vector<CPoint> point2CPoint(const vector<Point> & points);
 
