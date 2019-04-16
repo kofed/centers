@@ -14,16 +14,20 @@ Contour::Contour(vector<Point> & _points){
 }
 
 void Contour::init(){
+	if(points.size() < 5){
+		throw runtime_error("создание контура с колличеством точек < 5");
+	}
+
 	Moments moments = cv::moments( points, false );
 	center = CPoint( moments.m10/moments.m00 , moments.m01/moments.m00 );
 	
 	stringstream ss;
-	ss << "hash-" << center.x << "-" << center.y;
+	ss << "hash-" << points[0].x << "-" << points[0].y;
 	auto yml = Log::LOG->openYmlWrite(ss.str());
 	*yml << "x-y-hash" << "[";
 	for(auto p : points){
 		anglePointMap[pointHash(p)] = p;
-		*yml << "{:" << "x" <<  p.x  << "y" << p.y << "hash" <<  pointHash(p) << "}";
+		*yml << "{:" << "x" <<  p.x  << "y" << p.y << "hash" <<  pointHash(p) << "r" << distToCenter(p) << "angle" << angle(p) << "}";
 	}
 	*yml << "]";
 	Log::LOG->releaseAndDelete(yml);
@@ -31,7 +35,7 @@ void Contour::init(){
 
 float Contour::pointHash(const CPoint point) const {
 	float r = distToCenter(point);
-	return r*r + 10000.0f * angle(point);
+	return 20 * angle(point) + 0.02 * r;
 }
 
 vector<CPoint> Contour::point2CPoint(const vector<Point> & points){
@@ -187,7 +191,7 @@ Contour Contour::diviate(const int dx, const int dy) const{
 	vector<CPoint> diviated;
 
 	for(auto p : points){
-		diviated.push_back(Point(p.x + dx, p.y + dy));	
+		diviated.push_back(CPoint(p.x + dx, p.y + dy));	
 	};
 	return Contour(diviated);
 }

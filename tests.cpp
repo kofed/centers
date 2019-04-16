@@ -13,6 +13,10 @@ void Tests::run(){
 	disparityTest();
 }
 
+//void Tests::hashFunctionTest(){
+	
+//}
+
 void Tests::disparityTest(){
 
 	Log::LOG->setFolder(0, "test");
