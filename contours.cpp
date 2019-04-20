@@ -15,6 +15,7 @@ Contours::Contours(const Mat & _image, const int _intencity, const Contours* ref
 		if(vPoint.size() < MIN_CONTOUR_SIZE){
 			continue;
 		}
+		excludeBorderPoints(vPoint);
 		lContours.push_back(Contour(vPoint));
 	}
 
@@ -107,15 +108,6 @@ const Contour & Contours::according(const Contour & contour) const {
 	return *itAcc;
 }
 
-Contours3d Contours::disparity(const Contours & contours) const{
-	vector<Contour3d> disparities;
-	for(auto it = lContours.begin(); it != lContours.end(); ++it){
-		Contour accContour = contours.according(*it).removeNullPoints();
-		disparities.push_back(accContour.disparity(it->removeNullPoints()));
-	}
-	return Contours3d(disparities, intencity);
-}
-
 Contours Contours::diviate(const int dx, const int dy) const{
 	list<Contour> divContours;	
 	for(auto contour : lContours){
@@ -130,4 +122,12 @@ void Contours::toYml(){
 		contour.toYml(*yml);
 	}
 	Log::LOG->releaseAndDelete(yml);
+}
+
+void Contours::excludeBorderPoints(vector<Point> points) const{
+	auto new_end = std::remove_if(points.begin(), points.end(),
+	                              [this](const Point& p)
+	                              { return p.x == 0 || p.y == 0 || p.x == image.rows || p.y == image.cols; });
+
+	points.erase(new_end, points.end());
 }

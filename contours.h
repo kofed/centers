@@ -27,6 +27,8 @@ private:
 
 	void filtRepeatedContours(const Contours & ref);
 
+	void excludeBorderPoints(vector<Point> points) const;
+
 	const int intencity;
 
 public:
@@ -52,5 +54,7 @@ public:
 	Contours diviate(const int dx, const int dy) const;
 
 	void toYml();
+
+	int getIntencity() const{return intencity;};
 };
 #endif

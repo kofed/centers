@@ -26,8 +26,9 @@ private:
 
 	void init();
 
-	float pointHash(const CPoint point) const;
 public:
+	float pointHash(const CPoint point) const;
+
 	static vector<CPoint> point2CPoint(const vector<Point> & points);
 
 	CPoint center;
@@ -40,44 +41,19 @@ public:
 
 	int size();
 
-	void draw(Mat * drawing);
-
-	void drawCenter(Mat * drawing);
-
 	bool equals(const Contour & ref) const;
 
 	void toYml(FileStorage & yml) const;
 
 	double distToCenter(const CPoint point) const;
 
-	Contour3d disparity(const Contour & contour) const;
-
-	CPoint getPoint(const float angle);
-
 	Contour diviate(const int dx, const int dy) const;
 
-	Contour removeNullPoints() const;
 
-	class Iterator{
-		private:
-			vector<CPoint>::const_iterator it;
-			vector<CPoint>::const_iterator end;
-			const Contour & contour;
-			float angle1, angle2;
-			bool angleCondition(const float tg) const;
-			FileStorage * tgLog;
-		public:
-			Iterator(const Contour & _contour);
-			~Iterator();
-			bool next(const float tg);
-			bool next();
-			const CPoint get() const;
-			const CPoint get(const float tg) const;
-			float tg() const;
-			float angle() const;
-	};
+	map<float, CPoint>::const_iterator upperBound(const float hash) const;
 
-	Iterator iterator() const;
+	map<float, CPoint>::const_iterator lowerBound(const float hash) const;
 
+	friend class Disparity;
 };
 #endif

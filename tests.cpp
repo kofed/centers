@@ -3,6 +3,7 @@
 #include "log.h"
 #include "fframe.h"
 #include "contours3d.h"
+#include "disparity.h"
 
 Tests::Tests(const string & _imagePath)
 	:imagePath(_imagePath){
@@ -33,7 +34,8 @@ void Tests::disparityTest(){
 	for(int i = 0;i<10; ++i ){
 
 		right.push_back(left[i].diviate(4*i, i));
-		disparities.push_back(left[i].disparity(right[i]));
+		Disparity disp = Disparity();
+		disparities.push_back(disp.disparity(left[i], right[i]));
 	}
 
 	Log::LOG->setFolder(2, "left");
