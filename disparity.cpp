@@ -25,8 +25,7 @@ Contour3d Disparity::disparity(const Contour & _left, const Contour & _right){
 		
 	for(auto p : left->getPoints()){
 		CPoint _p = getPointR(p);
-		auto dx = _p.x - p.x;
-		disparityPoints.push_back(CPoint3(p.x, p.y, dx));
+		disparityPoints.push_back(CPoint3(p.x, p.y, disparity(p, _p)));
 
 		*yml << "{:" << "pointL" << p << "pointR" << _p << "}";
 	}
@@ -92,4 +91,8 @@ CPoint Disparity::getPointR(const CPoint pointL) const {
 
 float Contour::pointHash(const CPoint point) const {
 	return angle(point);
+}
+
+static float Disparity::disparity(const CPoint & left, const CPoint & right){
+	return right.x - left.x;
 }

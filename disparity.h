@@ -22,5 +22,7 @@ public:
 	Contour3d disparity(const Contour & _left, const Contour & _right);
 	
 	Contours3d disparity(const Contours & contoursL, const Contours & contoursR);
+
+	static float disparity(const CPoint & left, const CPoint & right);
 };
 #endif 
