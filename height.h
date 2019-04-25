@@ -1,4 +1,8 @@
 #include <vector>
+#include <boost/geometry/index/rtree.hpp>
+
+namespace bgi = boost::geometry::index;
+typedef std::pair<box, unsigned> value;
 
 class Height{
 
@@ -8,6 +12,11 @@ class Height{
 		Point2f point;
 
 		float disparity;
+
+		bool operator< (const Point2Disp & p2d){
+			float dist = norm(p2d.point - point);
+			float ddisp = p2d.disparity - disparity;
+		}
 	};
 
 public:
@@ -28,6 +37,6 @@ public:
 	Point3f point3Sm(Point2f point, disparity) const;
 
 private:
-	map<Point2f, float> point2disparity;
+	bgi::rtree< value, bgi::quadratic<4> > rtree;
 
 }
