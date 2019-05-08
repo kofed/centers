@@ -9,15 +9,11 @@ Point2f TreeSurface::nearest(Point2f & point){
 Height::Height(){
 	CalibData cd = CalibData::fromYml("resources/calibData.yml");
 
-	/*for(auto s : cd.surfaces){
-		//RTreeWrapper
-		TreeSurface treeSurface
-		for(auto c = s.corners.begin(); c != s.corners.end(); ++c){
-			float disparity = Disparity::disparity(c->first, c->second);
-			treeSurface.insert(c->first, disparity);
-		}
-		height2treeSurface[s.h] = treeSurface;
-	}*/
+	for(auto surface : calibData.surfaces){
+		height2chessBoardPx[surfaces.height] = Disparity::disparity(surface.leftPx, surface.rightPx);
+		height2chessBoardSm[surfaces.height] = surface.leftSm;
+	}
+	
 }
 
 Contours3d Height::to3dSm(const Contours3d disparity){
