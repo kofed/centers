@@ -4,6 +4,16 @@ Disparity::Disparity(){
 
 	}
 
+ChessBoardRtree Disparity::disparity (const ChessBoard & left, const ChessBoard & right){
+	ChessBoardRtree disparity(left.getCorners());
+	for(int i = 0; i < left.size.width; ++i){
+		for(int j = 0; j < left.size.height; ++j){
+			disparity.setValue(Point2i(i, j), disparity(left[i][j], right[i][j]));
+		}
+	}
+	return disparity;
+}
+
 Contours3d Disparity::disparity(const Contours & contoursL, const Contours & contoursR){
 	vector<Contour3d> disparities;
 		for(auto it = contoursL.getLContours().begin(); it != contoursL.getLContours().end(); ++it){
