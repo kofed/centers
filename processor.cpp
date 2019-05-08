@@ -50,7 +50,7 @@ void Processor::process( Mat & image){
 		Log::LOG->logStart(2, "dots");
 		ofstream* dotsTxt = Log::LOG->openTxt("dots");
 		int totalSplittedDots = 0;
-		for(int iSplitted = 0; iSplitted < splittedContours.size(); ++iSplitted){
+		for(unsigned iSplitted = 0; iSplitted < splittedContours.size(); ++iSplitted){
 			int dotsNumber = splittedContours[iSplitted].getDotCount();
 			*dotsTxt << "splitted " << iSplitted << " " << dotsNumber << endl;
 		    totalSplittedDots = totalSplittedDots +  dotsNumber;
@@ -60,7 +60,7 @@ void Processor::process( Mat & image){
 		 Log::LOG->logFinish(2, "dots");
 		 
 		 Log::LOG->logStart(2, "centers");
-		 for(int iSplitted = 0; iSplitted < splittedContours.size(); ++iSplitted){
+		 for(unsigned iSplitted = 0; iSplitted < splittedContours.size(); ++iSplitted){
 		 	splittedContours[iSplitted].writeCentersToFile();
 		 }
 		 Log::LOG->logFinish(2, "centers");

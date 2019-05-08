@@ -53,4 +53,16 @@ void Tests::disparityTest(){
 	for(auto c : disparities){
 		c.toYml();
 	}
+
+
+	////////////////////////////////////////////////////
+	Height height("resources/calibData.yml");
+	vector<Contours3d> left3dSm;
+	for(auto c : disparities){
+		left3dSm.push_back(height.to3dSm(c));
+	}
+	for(auto c : left3dSm){
+		c.toYml();
+	}
+
 }

@@ -93,6 +93,6 @@ float Contour::pointHash(const CPoint point) const {
 	return angle(point);
 }
 
-static float Disparity::disparity(const CPoint & left, const CPoint & right){
+float Disparity::disparity(const CPoint & left, const CPoint & right){
 	return right.x - left.x;
 }

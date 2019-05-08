@@ -11,7 +11,7 @@ class Contours3d;
 
 class Contours{
 private:
-	const int MIN_CONTOUR_SIZE = 5;
+	const unsigned MIN_CONTOUR_SIZE = 5;
 
 	Mat image;
 
