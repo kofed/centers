@@ -21,14 +21,19 @@ Height::Height(){
 }
 
 Contours3d Height::to3dSm(const Contours3d disparity){
-
+	Contours3d c3dSm;
+	for(auto c : disparity.getLContours()){
+		c3dSm.push_back(to3dSm(c));
+	}
+	return c3dSm;
 }
 
 Contour3d Height::to3dSm(const Contour contour){
 	vector<Point3f> pointsSm;
 	for(auto p : contour.getPoints()){
-		pointsSm.push_back();
+		pointsSm.push_back(to3dSm(p));
 	}
+	return Contour3d(pointsSm);
 }
 
 /**
