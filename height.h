@@ -29,8 +29,8 @@ public:
 	Point3f point3Sm(Point2f point, disparity) const;
 
 private:
-	map<float, ChessBoardRTree> height2chessBoardSm;
-	map<float, ChessBoard> height2chessBoardPx;
+	map<int, ChessBoardRTree> height2chessBoardSm;
+	map<int, ChessBoard> height2chessBoardPx;
 
 	private CalibData calibData;
 }
