@@ -13,6 +13,10 @@ Contours3d::Contours3d(const vector<Contour3d> & _vContours, const int _minInten
 
 }
 
+Contours3d::Contours3d(const vector<Contour3d> & _vContours):vContours(_vContours){
+
+}
+
 void Contours3d::toYml()const{
 	FileStorage* yml = Log::LOG->openYmlWrite(minIntencity);
 	for(auto c : vContours){

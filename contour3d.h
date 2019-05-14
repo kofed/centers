@@ -16,6 +16,8 @@ public:
 
 	Contour3d(const vector<CPoint3> & _points);
 
+	const vector<CPoint3> &  getPoints()const {return points;}
+
 	void toYml(FileStorage & yml) const;
 };
 #endif

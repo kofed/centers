@@ -4,14 +4,14 @@ Disparity::Disparity(){
 
 	}
 
-ChessBoardRtree Disparity::disparity (const ChessBoard & left, const ChessBoard & right){
-	ChessBoardRtree disparity(left.getCorners());
+ChessBoardRtree* Disparity::disparity (const ChessBoard & left, const ChessBoard & right){
+	ChessBoardRtree* dispCB = new ChessBoardRtree(left.getCorners());
 	for(int i = 0; i < left.size.width; ++i){
 		for(int j = 0; j < left.size.height; ++j){
-			disparity.setValue(Point2i(i, j), disparity(left[i][j], right[i][j]));
+			dispCB->setValue(Point2i(i, j), disparity(left.get(i,j), right.get(i,j)));
 		}
 	}
-	return disparity;
+	return dispCB;
 }
 
 Contours3d Disparity::disparity(const Contours & contoursL, const Contours & contoursR){

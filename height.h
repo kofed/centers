@@ -1,36 +1,47 @@
+#ifndef HEIGHT_H
+#define HEIGHT_H
+
 #include <vector>
-#include <boost/geometry/index/rtree.hpp>
 #include "../kudr2/src/model/calibData.h"
-
-
-namespace bgi = boost::geometry::index;
-typedef std::pair<box, float> value;
-typedef bgi::rtree<value, bgi::quadratic<4>> Rtree;
+#include <map>
+#include "chessBoardRtree.h"
+#include "contours3d.h"
 
 class Height{
 
 public:
-	Height():	
+	Height();
 
-	Height(const CalibData & calibData);
+	float heightSm(const Point2f & left, const float disparity) const;
 
-	static Height fromYml(const string & name);
+	Contours3d to3dSm(const Contours3d disparity);
 
-	float heightSm(Point2f point, disparity);
+	Contour3d to3dSm(const Contour3d contour);
 
-	/**
-	 * точка в сантиметрах относительно центра
-	 */
-	Point2f pointSm(Point2f point, disparity) const;
+	Point3f to3dSm(const Point3f point);
 
-	/**
-	 * точка в сантиметрах относительно центра
-	 */
-	Point3f point3Sm(Point2f point, disparity) const;
 
 private:
-	map<int, ChessBoard> height2chessBoardSm;
-	map<int, ChessBoardRTree> height2chessBoardPx;
+	std::map<int, ChessBoard*> height2chessBoardSm;
+	std::map<int, ChessBoardRtree*> height2chessBoardPx;
 
-	private CalibData calibData;
-}
+	CalibData calibData;
+
+	float px2smX(Point3i index);
+
+	float px2smY(Point3i index);
+
+	Point2f getCornerSm(const Point3i index);
+
+	Point2f getCornerPx(Point3i index);
+
+	float heightSm(const Point2f & left, const float disparity);
+
+	Point3f approximate(const Point3f point, const vector<Point3f> & bp) const;
+
+	Point3i nearest(const Point2f & left, const float disparity);
+
+	Point3i nearest(const Point3f & pointWithDisparity);
+};
+
+#endif

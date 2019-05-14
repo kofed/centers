@@ -18,7 +18,11 @@ public:
 
 	Contours3d(const vector<Contour3d> & _vContours, const int _minIntencity);
 
+	Contours3d(const vector<Contour3d> & _vContours);
+
 	void toYml() const;
+
+	const vector<Contour3d> & getLContours() const {return vContours;}
 };
 
 #endif

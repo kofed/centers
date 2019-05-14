@@ -4,6 +4,7 @@
 #include "fframe.h"
 #include "contours3d.h"
 #include "disparity.h"
+#include "height.h"
 
 Tests::Tests(const string & _imagePath)
 	:imagePath(_imagePath){
@@ -56,7 +57,7 @@ void Tests::disparityTest(){
 
 
 	////////////////////////////////////////////////////
-	Height height("resources/calibData.yml");
+	Height height;
 	vector<Contours3d> left3dSm;
 	for(auto c : disparities){
 		left3dSm.push_back(height.to3dSm(c));
