@@ -28,6 +28,8 @@ private:
 public:
     FFrame(Mat & _image);
 
+    FFrame(string imageFile);
+
     vector<Contours> & findContours();    
 
 };

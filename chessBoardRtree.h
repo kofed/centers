@@ -27,12 +27,14 @@ private:
 public:	
 	ChessBoardRtree(){};
 
-	ChessBoardRtree(const std::vector<std::vector<Point2f>> & corners);
+	ChessBoardRtree(const std::vector<std::vector<Point2f>> & corners, const Size _size,
+			const Point2f _center, const Point2i _centerIndex, const float _cellSize, const Size _resolution);
 
 	void setValue(Point2i index, float value);
 	
 	Point2i nearest(const Point2f point) const;
 
 	float getValue(const Point2f point) const;
+
 };
 #endif

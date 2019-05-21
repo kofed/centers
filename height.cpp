@@ -2,11 +2,11 @@
 #include "disparity.h"
 
 Height::Height(){
-	CalibData cd = CalibData::fromYml("resources/calibData.yml");
+	calibData = CalibData::fromYml("resources/chessboard.json");
 
-	for(auto surface : calibData.surfaces){
-		height2chessBoardPx[surface.getHeight()] = Disparity::disparity(*(surface.getLeftPx()), *(surface.getRightPx()));
-		height2chessBoardSm[surface.getHeight()] = surface.getLeftSm();
+	for(auto surface = calibData.surfaces.begin(); surface != calibData.surfaces.end(); ++surface){
+		height2chessBoardPx[surface->getHeight()] = Disparity::disparity(*(surface->getLeftPx()), *(surface->getRightPx()));
+		height2chessBoardSm[surface->getHeight()] = surface->getLeftSm();
 	}
 	
 }

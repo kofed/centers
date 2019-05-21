@@ -5,9 +5,10 @@ Disparity::Disparity(){
 	}
 
 ChessBoardRtree* Disparity::disparity (const ChessBoard & left, const ChessBoard & right){
-	ChessBoardRtree* dispCB = new ChessBoardRtree(left.getCorners());
-	for(int i = 0; i < left.size.width; ++i){
-		for(int j = 0; j < left.size.height; ++j){
+	ChessBoardRtree* dispCB = new ChessBoardRtree(left.getCorners(), left.getSize(), left.getCenter(),
+			left.getCenterIndex(), left.getCellSize(), left.getResolution());
+	for(int i = 0; i < left.getSize().width; ++i){
+		for(int j = 0; j < left.getSize().height; ++j){
 			dispCB->setValue(Point2i(i, j), disparity(left.get(i,j), right.get(i,j)));
 		}
 	}

@@ -6,8 +6,7 @@
 #include "disparity.h"
 #include "height.h"
 
-Tests::Tests(const string & _imagePath)
-	:imagePath(_imagePath){
+Tests::Tests(){
 
 }
 
@@ -15,18 +14,16 @@ void Tests::run(){
 	disparityTest();
 }
 
-//void Tests::hashFunctionTest(){
-	
-//}
+void Tests::heightTest(){
+	Log::LOG->setFolder(0, "test");
+	Log::LOG->setFolder(1, "height");
+}
 
 void Tests::disparityTest(){
-
 	Log::LOG->setFolder(0, "test");
 	Log::LOG->setFolder(1, "disparity");
-	Mat image = imread(imagePath);		
-	cv::cvtColor(image, image, CV_BGR2GRAY);
 	
-	FFrame frame(image);
+	FFrame frame("resources/115.png");
 	vector<Contours> left = frame.findContours();
 
 	vector<Contours> right;
@@ -57,6 +54,7 @@ void Tests::disparityTest(){
 
 
 	////////////////////////////////////////////////////
+	Log::LOG->setFolder(2, "height");
 	Height height;
 	vector<Contours3d> left3dSm;
 	for(auto c : disparities){

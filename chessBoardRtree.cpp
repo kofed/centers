@@ -1,33 +1,35 @@
 #include "chessBoardRtree.h"
 
-ChessBoardRtree::ChessBoardRtree(const std::vector<std::vector<Point2f>> & points):ChessBoard(points){
+ChessBoardRtree::ChessBoardRtree(const std::vector<std::vector<Point2f>> & points, const Size _size,
+		const Point2f _center, const Point2i _centerIndex, const float _cellSize, const Size _resolution)
+	:ChessBoard(points, _size, _center, _centerIndex, _cellSize, _resolution){
 
 }
 
 void ChessBoardRtree::setValue(const Point2i index, float value){
-	Point2f corner = corners[index.x][index.y];
+	Point2f corner = get(index);
 
 	float x1, y1, x2, y2;
 	if(index.x != 0){
-		x1 = corners[index.x - 1][index.y].x;
+		x1 = get(index.x - 1, index.y).x;
 	}else{
 		x1 = 0;
 	}
 
 	if(index.y != 0){
-		y1 = corners[index.x][index.y - 1].y;
+		y1 = get(index.x, index.y - 1).y;
 	}else{
 		y1 = 0;
 	}
 
-	if(index.x != size.width){
-		x2 = corners[index.x + 1][index.y].x;
+	if(index.x != size.width - 1){
+		x2 = get(index.x + 1, index.y).x;
 	}else{
 		x2 = resolution.width;
 	}
 
-	if(index.y != size.height){
-		y2 = corners[index.x][index.y + 1].x;
+	if(index.y != size.height - 1){
+		y2 = get(index.x, index.y + 1).y;
 	}else{
 		y2 = resolution.height;
 	}

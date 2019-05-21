@@ -7,10 +7,9 @@ using namespace std;
 
 class Tests{
 public:
-	Tests(const string & _imagePath);
+	Tests();
 	void run();
 private:
-	string imagePath;
 	void disparityTest();
 };
 
