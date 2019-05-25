@@ -26,6 +26,8 @@ public:
 	
 	Contours3d disparity(const Contours & contoursL, const Contours & contoursR);
 
+	vector<Contours3d> disparity(const vector<Contours> & vContoursL, const vector<Contours> & vContoursR);
+
 	static ChessBoardRtree* disparity (const ChessBoard & left, const ChessBoard & right);
 
 

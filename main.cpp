@@ -44,11 +44,8 @@ int main(int argc, const char* argv[]) {
 
     String imagePath = parser.get<String>(std::string("i"));
     if(!parser.get<String>(string("t")).empty()){
-	if(imagePath.empty()){
-		cout << "Для запуска тестов укажите путь файла с изображением" << endl;
-		return 1;
-	}
-	Tests tests(string(imagePath.c_str()));
+
+	Tests tests;
 	tests.run();
 	return 0;
     }

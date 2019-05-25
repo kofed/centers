@@ -44,9 +44,21 @@ Contour3d Disparity::disparity(const Contour & _left, const Contour & _right){
 	return Contour3d(disparityPoints);
 }
 
+vector<Contours3d> Disparity::disparity(const vector<Contours> & left, const vector<Contours> & right){
+	if(left.size() != right.size()){
+		throw runtime_error("left и right должны иметь одинаковый размер для построения disparity");
+	}
+
+	vector<Contours3d> result;
+	for(int i = 0; i < left.size(); ++i ){
+		result.push_back(disparity(left[i], right[i]));
+	}
+	return result;
+}
+
 map<float, CPoint>::const_iterator Disparity::upperBound(const CPoint & pointL, const float hash) const{
 	auto itUp = right->upperBound(hash);
-	while(abs(left->distToCenter(pointL) - right->distToCenter(itUp->second)) > 10){
+	while(itUp->first < hash /*abs(left->distToCenter(pointL) - right->distToCenter(itUp->second)) > 10*/){
 		++itUp;
 		if(itUp == right->anglePointMap.end()){
 				itUp = left->anglePointMap.begin();
@@ -63,8 +75,9 @@ map<float, CPoint>::const_iterator Disparity::lowerBound(const CPoint & pointL, 
 	if(itLow == right->anglePointMap.begin() || itUp == right->anglePointMap.begin()){
 		itLow = right->anglePointMap.end();
 		--itLow;
+		return itLow;
 	}
-	while(abs(left->distToCenter(pointL) - right->distToCenter(itLow->second)) > 6){
+	while(itLow->first > hash/* abs(left->distToCenter(pointL) - right->distToCenter(itLow->second)) > 10*/){
 			if(itLow == right->anglePointMap.begin()){
 				itLow = right->anglePointMap.end();
 			}
@@ -86,15 +99,11 @@ CPoint Disparity::getPointR(const CPoint pointL) const {
 	float dx = k * (itUp->second.x - itLow->second.x);
 	float dy = k * (itUp->second.y - itLow->second.y);
 
-	if(dx > 500 || dy > 500 || dx < -500 || dy < -500){
-		throw runtime_error("dx, dy too big");
-	}
+	//if(dx > 500 || dy > 500 || dx < -500 || dy < -500){
+	//	throw runtime_error("dx, dy too big");
+	//}
 
 	CPoint p = CPoint(itLow->second.x + dx, itLow->second.y + dy);
-
-	if(p.x != p.x || p.y != p.y  || p.x > 500 || p.y > 500 || p.x < -500 || p.y < -500){
-			throw runtime_error("dx, dy too big");
-		}
 
 	return p;
 }

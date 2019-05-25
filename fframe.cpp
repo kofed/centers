@@ -6,7 +6,7 @@
 //#include "opencv/cv.h"
 #include "fframe.h"
 
-FFrame(string imageFile){
+FFrame::FFrame(const string imageFile){
 	image = imread(imageFile);
 	cv::cvtColor(image, image, CV_BGR2GRAY);
 }

@@ -23,6 +23,8 @@ public:
 	void toYml() const;
 
 	const vector<Contour3d> & getLContours() const {return vContours;}
+
+	inline int getMinIntencity() const {return minIntencity;}
 };
 
 #endif

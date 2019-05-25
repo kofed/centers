@@ -7,10 +7,11 @@ using namespace std;
 
 class Tests{
 public:
-	Tests();
 	void run();
 private:
 	void disparityTest();
+
+	void heightTest();
 };
 
 #endif

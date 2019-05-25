@@ -6,6 +6,7 @@
 #include <chrono>
 #include "log.h"
 #include "contours.h"
+#include <string>
 
 using namespace cv;
 using namespace std;
@@ -28,7 +29,7 @@ private:
 public:
     FFrame(Mat & _image);
 
-    FFrame(string imageFile);
+    FFrame(const string imageFile);
 
     vector<Contours> & findContours();    
 

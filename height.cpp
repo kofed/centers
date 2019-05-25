@@ -16,7 +16,7 @@ Contours3d Height::to3dSm(const Contours3d disparity){
 	for(auto c : disparity.getLContours()){
 		c3dSm.push_back(to3dSm(c));
 	}
-	return Contours3d(c3dSm);
+	return Contours3d(c3dSm, disparity.getMinIntencity());
 }
 
 Contour3d Height::to3dSm(const Contour3d contour){
