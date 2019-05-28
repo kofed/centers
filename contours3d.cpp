@@ -24,3 +24,9 @@ void Contours3d::toYml()const{
 	}
 	Log::LOG->releaseAndDelete(yml);
 }
+
+void Contours3d::draw(Mat & drawing) const{
+	for(auto c : vContours){
+		c.draw(drawing);
+	}
+}

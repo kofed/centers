@@ -19,6 +19,8 @@ public:
 	const vector<CPoint3> &  getPoints()const {return points;}
 
 	void toYml(FileStorage & yml) const;
+
+	void draw(Mat & drawing) const;
 };
 #endif
 

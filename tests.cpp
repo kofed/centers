@@ -27,12 +27,19 @@ void Tests::heightTest(){
 	Log::LOG->setFolder(2, "height");
 		Height height;
 		vector<Contours3d> left3dSm;
+
+		Mat drawing;
+		cv::cvtColor(frameL.image, drawing, CV_GRAY2BGR);
 		for(auto c : disparities){
 			left3dSm.push_back(height.to3dSm(c));
+
+			height.to3dPx(c).draw(drawing);
 		}
 		for(auto c : left3dSm){
 			c.toYml();
 		}
+
+		Log::LOG->writeImage("contours", drawing);
 }
 
 void Tests::disparityTest(){
@@ -73,11 +80,16 @@ void Tests::disparityTest(){
 	Log::LOG->setFolder(2, "height");
 	Height height;
 	vector<Contours3d> left3dSm;
+	Mat drawing;
+	cv::cvtColor(frame.image, drawing, CV_GRAY2BGR);
 	for(auto c : disparities){
 		left3dSm.push_back(height.to3dSm(c));
+		height.to3dPx(c).draw(drawing);
 	}
+
 	for(auto c : left3dSm){
 		c.toYml();
 	}
+	Log::LOG->writeImage("contours", drawing);
 
 }

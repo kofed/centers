@@ -20,6 +20,11 @@ public:
 
 	Point3f to3dSm(const Point3f point);
 
+	Point3f to3dPx(const Point3f point);
+
+	Contour3d to3dPx(const Contour3d contour);
+
+	Contours3d to3dPx(const Contours3d disparity);
 
 private:
 	std::map<int, ChessBoard*> height2chessBoardSm;

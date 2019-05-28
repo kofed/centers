@@ -56,5 +56,6 @@ public:
 	void toYml();
 
 	int getIntencity() const{return intencity;};
+
 };
 #endif

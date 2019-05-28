@@ -33,6 +33,8 @@ public:
 
     vector<Contours> & findContours();    
 
+    friend class Tests;
+
 };
 
 

@@ -21,3 +21,12 @@ void Contour3d::toYml(FileStorage & yml) const{
 	}
 	yml << "]";
 }
+
+void Contour3d::draw(Mat & drawing) const{
+	for(auto p : points){
+		if(p.z > 1000 || p.z < 0){
+			throw runtime_error("heigh is incorrect");
+		}
+		circle(drawing, Point2f(p.x, p.y), 1, Scalar( 255*( 1 - p.z/150), 255*( 1 - p.z/150), 255 * p.z/150));
+	}
+}

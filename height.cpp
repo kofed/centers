@@ -43,6 +43,27 @@ Point3f Height::to3dSm(const Point3f point){
 	return Point3f(xSm, ySm, nearestCornerIdx.z);
 }
 
+Contours3d Height::to3dPx(const Contours3d disparity){
+	vector<Contour3d> c3dPx;
+	for(auto c : disparity.getLContours()){
+		c3dPx.push_back(to3dPx(c));
+	}
+	return Contours3d(c3dPx, disparity.getMinIntencity());
+}
+
+Contour3d Height::to3dPx(const Contour3d contour){
+	vector<Point3f> pointsPx;
+	for(auto p : contour.getPoints()){
+		pointsPx.push_back(to3dPx(p));
+	}
+	return Contour3d(pointsPx);
+}
+
+Point3f Height::to3dPx(const Point3f point){
+	Point3i nearestCornerIdx = nearest(point);
+	return Point3f(point.x, point.y, nearestCornerIdx.z);
+}
+
 Point2f Height::getCornerSm(const Point3i index){
 	return height2chessBoardSm[index.z]->get(index.x, index.y);
 }
