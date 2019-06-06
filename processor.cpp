@@ -2,6 +2,8 @@
 #include <iostream>
 #include "fframe.h"
 #include "contours3d.h"
+#include "disparity.h"
+#include "height.h"
 
 Processor::Processor(){
 	loadRoi();
@@ -28,6 +30,42 @@ void Processor::process(VideoCapture & capture){
     cout << "Contours time: " << Log::LOG->getDuration("contours").count() << endl;
  }
 
+void Processor::height(const Mat & left, const Mat & right){
+	FFrame lFrame(left);
+	FFrame rFrame(right);
+
+	vector<Contours> lContours = lFrame.findContours();
+	vector<Contours> rContours = rFrame.findContours();
+
+	Disparity disparity;
+	vector<Contours3d> disparities = disparity.disparity(left, right);
+
+	Log::LOG->setFolder(2, "height");
+	Height height;
+	vector<Contours3d> left3dSm;
+
+	Mat drawing;
+	cv::cvtColor(left, drawing, CV_GRAY2BGR);
+	for(auto c : disparities){
+		left3dSm.push_back(height.to3dSm(c));
+
+		height.to3dPx(c).draw(drawing);
+	}
+	for(auto c : left3dSm){
+		c.toYml();
+	}
+
+	Log::LOG->writeImage("contours", drawing);
+}
+
+void Processor::height(VideoCapture & left, VideoCapture & right){
+	Mat lImage, rImage;
+
+	while(left.read(lImage) && right.read(rImage)){
+		height(lImage, rImage);
+	}
+} 
+
 void Processor::process( Mat & image){
 	Log::LOG->logStart(2, "load");
 	
@@ -37,7 +75,7 @@ void Processor::process( Mat & image){
 		}
 
 		Mat resized;
-		resize(image,resized,Size(width, height));
+		resize(image,resized,size);
 
 		Mat cropped(resized, roi);
 
@@ -87,19 +125,18 @@ void Processor::process( Mat & image){
 			delete hYml;
 		}
 		Log::LOG->logFinish(2, "3d");
-	
 }
 
 void Processor::loadRoi(){
     ifstream roiFile ("resources/roi.txt");
     if(roiFile.is_open()){
-    	roiFile >> width;
-    	roiFile >> height;
+    	roiFile >> size.width;
+    	roiFile >> size.height;
     	roiFile >> roi.x;
     	roiFile >> roi.y;
     	roiFile >> roi.width;
     	roiFile >> roi.height;
     }else{
-    	roi = Rect(0, 0, width, height);
+    	roi = Rect(0, 0, size.width, size.height);
     }
 }

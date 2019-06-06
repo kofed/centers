@@ -27,7 +27,7 @@ private:
     void drawCircles(Mat & background, vector<vector<Point> > & contours, int iSplitted);
 
 public:
-    FFrame(Mat & _image);
+    FFrame(const Mat & _image);
 
     FFrame(const string imageFile);
 

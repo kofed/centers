@@ -11,7 +11,7 @@ FFrame::FFrame(const string imageFile){
 	cv::cvtColor(image, image, CV_BGR2GRAY);
 }
 
-FFrame::FFrame(Mat & _image):
+FFrame::FFrame(const Mat & _image):
 		image(_image){
 	
 }

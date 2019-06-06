@@ -22,8 +22,9 @@ int main(int argc, const char* argv[]) {
 
 	const char* keys = "{help h usage ? |      | print this message   }"
 				  "{i        |   |image to process     }"
-				  "{v        |   |video to process     }"
-				 "{d         |   | debug}"
+				  "{vl       |   |left video to process     }"
+				"{vr | | right video to process }" 
+				"{d         |   | debug}"
 				"{add3d      |   |add 3-rd coordinate from file h.yml}"
 				"{t           |   |run tests}";
 
@@ -61,16 +62,18 @@ int main(int argc, const char* argv[]) {
     	 return EXIT_SUCCESS;
     }
 */
-    String videoPath = parser.get<String>(std::string("v"));
-    if(!videoPath.empty()){
+    String leftVideoPath = parser.get<String>(std::string("vl"));
+    String rightVideoPath = parser.get<String>(std::string("vr"));
+    if(!leftVideoPath.empty() || !rightVideoPath.empty()){
     	try{
-    		VideoCapture capture(videoPath);
-    		if(!capture.isOpened()){
+    		VideoCapture lCapture(leftVideoPath);
+		VideoCapture rCapture(rightVideoPath);
+    		if(!lCapture.isOpened() || !rCapture.isOpened()){
     			cout << "Unable to open VideoCapture\n";
     			return -1;
     		}
 
-    		processor.process(capture);
+    		processor.height(lCapture, rCapture);
     	}catch(runtime_error & e){
     		cout << "ERROR! "<< e.what() << endl;
     	}
