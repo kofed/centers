@@ -30,7 +30,13 @@ void Processor::process(VideoCapture & capture){
     cout << "Contours time: " << Log::LOG->getDuration("contours").count() << endl;
  }
 
-void Processor::height(const Mat & left, const Mat & right){
+void Processor::height(Mat & left,  Mat & right){
+	if(left.channels() > 1){
+				cout << "The image has more than one channel. Converting" << endl;
+				cv::cvtColor(left, left, CV_BGR2GRAY);
+				cv::cvtColor(right, right, CV_BGR2GRAY);
+			}
+
 	FFrame lFrame(left);
 	FFrame rFrame(right);
 
@@ -38,9 +44,9 @@ void Processor::height(const Mat & left, const Mat & right){
 	vector<Contours> rContours = rFrame.findContours();
 
 	Disparity disparity;
-	vector<Contours3d> disparities = disparity.disparity(left, right);
+	vector<Contours3d> disparities = disparity.disparity(lContours, rContours);
 
-	Log::LOG->setFolder(2, "height");
+	Log::LOG->start("height");
 	Height height;
 	vector<Contours3d> left3dSm;
 
@@ -55,19 +61,21 @@ void Processor::height(const Mat & left, const Mat & right){
 		c.toYml();
 	}
 
-	Log::LOG->writeImage("contours", drawing);
+	Log::LOG->write("contours", drawing);
+	Log::LOG->finish("height");
 }
 
 void Processor::height(VideoCapture & left, VideoCapture & right){
 	Mat lImage, rImage;
 
-	while(left.read(lImage) && right.read(rImage)){
+	for(int i = 0; left.read(lImage) && right.read(rImage); ++i){
+		Log::LOG->setFolder(1, i);
 		height(lImage, rImage);
 	}
 } 
 
 void Processor::process( Mat & image){
-	Log::LOG->logStart(2, "load");
+	Log::LOG->start("load");
 	
 		if(image.channels() > 1){
 			cout << "The image has more than one channel. Converting" << endl;
@@ -79,13 +87,13 @@ void Processor::process( Mat & image){
 
 		Mat cropped(resized, roi);
 
-		Log::LOG->writeImage("cropped",  cropped);
-		Log::LOG->logFinish(2, "load");
+		Log::LOG->write("cropped",  cropped);
+		Log::LOG->finish("load");
 		
 		FFrame frame(cropped);
 		auto splittedContours = frame.findContours();
 		    		
-		Log::LOG->logStart(2, "dots");
+		Log::LOG->start("dots");
 		ofstream* dotsTxt = Log::LOG->openTxt("dots");
 		int totalSplittedDots = 0;
 		for(unsigned iSplitted = 0; iSplitted < splittedContours.size(); ++iSplitted){
@@ -95,15 +103,15 @@ void Processor::process( Mat & image){
 		 }
 		 *dotsTxt << "Total: " << totalSplittedDots;
 		 Log::LOG->closeTxt(dotsTxt);
-		 Log::LOG->logFinish(2, "dots");
+		 Log::LOG->finish("dots");
 		 
-		 Log::LOG->logStart(2, "centers");
+		 Log::LOG->start("centers");
 		 for(unsigned iSplitted = 0; iSplitted < splittedContours.size(); ++iSplitted){
 		 	splittedContours[iSplitted].writeCentersToFile();
 		 }
-		 Log::LOG->logFinish(2, "centers");
+		 Log::LOG->finish("centers");
 
-		Log::LOG->logStart(2, "3d");
+		Log::LOG->start("3d");
 		if(add3d){
 			FileStorage* hYml = Log::LOG->openYmlRead("h.yml");
                                 				
@@ -124,7 +132,7 @@ void Processor::process( Mat & image){
 			hYml->release();
 			delete hYml;
 		}
-		Log::LOG->logFinish(2, "3d");
+		Log::LOG->finish("3d");
 }
 
 void Processor::loadRoi(){

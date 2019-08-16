@@ -68,9 +68,14 @@ int main(int argc, const char* argv[]) {
     	try{
     		VideoCapture lCapture(leftVideoPath);
 		VideoCapture rCapture(rightVideoPath);
-    		if(!lCapture.isOpened() || !rCapture.isOpened()){
-    			cout << "Unable to open VideoCapture\n";
+    		if(!lCapture.isOpened()){
+    			cout << "Unable to open left VideoCapture\n";
     			return -1;
+    		}
+
+    		if(!rCapture.isOpened()){
+    		   	cout << "Unable to open right VideoCapture\n";
+    		   	return -1;
     		}
 
     		processor.height(lCapture, rCapture);

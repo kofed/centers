@@ -9,28 +9,34 @@ Contours::Contours(const list<Contour> & _lContours, const int _intencity)
 
 Contours::Contours(const Mat & _image, const int _intencity, const Contours* refContours)
 		:image(_image), intencity(_intencity){
-	Log::LOG->logStart(2, "contours");
-	findContours( image, vContours, hierarchy, CV_RETR_CCOMP, CV_CHAIN_APPROX_SIMPLE );
+	Log::LOG->start("contours");
+	findContours( image, vContours, hierarchy, CV_RETR_LIST, CV_CHAIN_APPROX_NONE );
+
 	for(auto vPoint : vContours){
 		if(vPoint.size() < MIN_CONTOUR_SIZE){
 			continue;
 		}
-		excludeBorderPoints(vPoint);
-		lContours.push_back(Contour(vPoint));
+		Contour contour = Contour(vPoint);
+	//	if(contour.center.x == 1001 && contour.center.y == 317){
+		if(isBorderContour(vPoint)){
+			continue;
+		}
+		//}
+
+		lContours.push_back(contour);
+		contour.toYml();
 	}
 
 	if(Log::LOG->debug){
 		Mat drawing = Mat::zeros( image.size(), CV_8UC3 );
 		draw(drawing);
-		Log::LOG->writeImage(intencity, drawing);
+		Log::LOG->write(intencity, drawing);
 	}
 
-//	if(refContours != NULL)
-//		filtRepeatedContours(*refContours);
-	Log::LOG->logFinish(2, "contours");
+	Log::LOG->finish("contours");
 }
 
-void Contours::draw(Mat & drawing){
+void Contours::draw(Mat & drawing) const{
 	if(hierarchy.size() > 0){
 		int idx = 0;
 		for( ; idx >= 0; idx = hierarchy[idx][0] ){
@@ -38,6 +44,19 @@ void Contours::draw(Mat & drawing){
 			drawContours( drawing, vContours, idx, color, 2, 8, hierarchy );
 		}
 	}
+}
+
+Mat Contours::drawAsPolylines(Mat & drawing) const {
+	for(auto contour : lContours){
+		contour.draw(drawing);
+	}
+	return drawing;
+}
+
+Mat Contours::drawAsPolylines()const{
+	Mat drawing = Mat::zeros(image.size(), CV_8UC3);
+	drawAsPolylines(drawing);
+	return drawing;
 }
 
 vector<CPoint> Contours::getCenters(){
@@ -59,7 +78,7 @@ int Contours::getDotCount(){
 
 void Contours::writeCentersToFile(){
 
-	Log::LOG->setFolder(2, "centers");
+	Log::LOG->start("centers");
 	ofstream* centersFile = Log::LOG->openTxt(intencity);
 
 	if(Log::LOG->debug){
@@ -68,13 +87,14 @@ void Contours::writeCentersToFile(){
 		for(Contour contour : lContours){
 			circle( drawing, contour.center, 4, Scalar(0, 0, 255), -1, 8, 0 );
 		}
-		Log::LOG->writeImage( intencity, drawing);
+		Log::LOG->write( intencity, drawing);
 	}
 
 	for(Contour contour : lContours){
 		*centersFile << contour.center << " " << contour.size() << endl;
 	}
 	Log::LOG->closeTxt(centersFile);
+	Log::LOG->finish("centers");
 }
 
 void Contours::filtRepeatedContours(const Contours & ref){
@@ -95,17 +115,45 @@ string Contours::getYmlName() const {
 	return ss.str();
 }
 
-const Contour & Contours::according(const Contour & contour) const {
-	int d = 10000;
+const Contour* Contours::according(const Contour & contour) const {
+	/*int d = 10000;
 	list<Contour>::const_iterator itAcc = lContours.begin();
-	for(auto it = lContours.begin(); it != lContours.end(); ++it){
+	for(list<Contour>::const_iterator  it = lContours.begin(); it != lContours.end(); ++it){
 		int _d = contour.distToCenter(it->center);
 		if(_d < d){
 			d = _d;
-			itAcc = it;
+			itAcc = (it);
 		}
 	}
-	return *itAcc;
+	const Contour & myContour = *itAcc;*/
+
+	const vector<const Contour*>  closest = inRange(contour.center, MAX_DISPARITY);
+	if(closest.size() == 0){
+		return nullptr;
+	}
+
+	const Contour* acc = *min_element(closest.begin(), closest.end(),
+			[contour](const Contour* c1, const Contour* c2){
+		return abs(c2->size() - contour.size()) >  abs(c1->size() - contour.size());
+	});
+
+
+	Contour * _acc = const_cast<Contour*>(acc);
+	_acc->color = contour.color;
+	return _acc;
+}
+
+vector<const Contour*> Contours::inRange(const CPoint & center, const int range) const{
+	vector<const Contour*> lpContours;
+	transform(lContours.begin(), lContours.end(), std::back_inserter(lpContours),
+			[](const Contour & c){return &c;});
+
+	vector<const Contour*> ranged;
+
+	std::copy_if (lpContours.begin(), lpContours.end(), std::back_inserter(ranged),
+			[center, range](const Contour * c){return abs(center.x - c->center.x) < range && abs(center.y - c->center.y) < range/3;});
+
+	return ranged;
 }
 
 Contours Contours::diviate(const int dx, const int dy) const{
@@ -124,10 +172,23 @@ void Contours::toYml(){
 	Log::LOG->releaseAndDelete(yml);
 }
 
-void Contours::excludeBorderPoints(vector<Point> points) const{
+void Contours::excludeBorderPoints(vector<Point> & points) const{
 	auto new_end = std::remove_if(points.begin(), points.end(),
 	                              [this](const Point& p)
-	                              { return p.x == 0 || p.y == 0 || p.x == image.rows || p.y == image.cols; });
+	                              { return p.x == 0 || p.y == 0 || p.x == image.cols - 1 || p.y == image.rows - 1; });
 
 	points.erase(new_end, points.end());
+}
+
+bool Contours::isBorderContour(const vector<Point> & points)const{
+	auto it = std::find_if (points.begin(), points.end(), [this](const Point& p)
+            { return p.x == 0 || p.y == 0 || p.x == image.cols - 1 || p.y == image.rows - 1; });
+	return it != points.end();
+}
+
+void Contours::excludeSmall(){
+	lContours.erase(
+	    std::remove_if(lContours.begin(), lContours.end(),
+	        [](const Contour & p) { return p.size() < 1500; }),
+			lContours.end());
 }

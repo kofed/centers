@@ -11,7 +11,8 @@ class Contours3d;
 
 class Contours{
 private:
-	const unsigned MIN_CONTOUR_SIZE = 5;
+	const unsigned MIN_CONTOUR_SIZE = 50;
+	const int MAX_DISPARITY = 200;
 
 	Mat image;
 
@@ -25,9 +26,15 @@ private:
 
 	vector<CPoint> getCenters();
 
+	void excludeSmall();
+
 	void filtRepeatedContours(const Contours & ref);
 
-	void excludeBorderPoints(vector<Point> points) const;
+	void excludeBorderPoints(vector<Point> & points) const;
+
+	bool isBorderContour(const vector<Point> & points)const;
+
+	vector<const Contour*> inRange(const CPoint & center, const int range) const;
 
 	const int intencity;
 
@@ -41,13 +48,16 @@ public:
 
 	Contours(const list<Contour> & _lContours, const int _intencity);
 
-	void draw(Mat & drawing);
+	void draw(Mat & drawing) const;
+
+	Mat drawAsPolylines(Mat & drawing) const;
+	Mat drawAsPolylines() const;
 
 	int getDotCount();
 
 	void writeCentersToFile();
 
-	const Contour & according(const Contour & contour) const;
+	const Contour * according(const Contour & contour) const;
 
 	Contours3d  disparity(const Contours & contours) const;
 

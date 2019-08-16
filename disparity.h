@@ -13,10 +13,18 @@ private:
 	const Contour* right;
 		
 	CPoint getPointR(const CPoint pointL) const;
+	CPoint getPointRConstY(const CPoint pointL) const;
 
 	map<float, CPoint>::const_iterator upperBound(const CPoint & pointL, const float hash) const;
+	CPoint upperBoundConstY(const CPoint pointL) const;
 	
 	map<float, CPoint>::const_iterator lowerBound(const CPoint & pointL, const float hash) const;
+	CPoint lowerBoundConstY(const CPoint pointL) const;
+
+	map<int, CPoint> dy2PointPosDx;
+	map<int, CPoint> dy2PointNegDx;
+
+
 
 	static float disparity(const CPoint & left, const CPoint & right);
 public:

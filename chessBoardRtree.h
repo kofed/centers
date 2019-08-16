@@ -36,5 +36,7 @@ public:
 
 	float getValue(const Point2f point) const;
 
+	friend void operator>>(const FileNode & fn, ChessBoardRtree & cb);
+	friend FileStorage & operator<<(FileStorage & fn, const ChessBoardRtree & cb);
 };
 #endif

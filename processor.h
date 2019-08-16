@@ -24,7 +24,7 @@ public:
 	void process( Mat & image);
 	void process( VideoCapture & capture);
 
-	void height(const Mat & left, const Mat & right);
+	void height(Mat & left, Mat & right);
 	void height(VideoCapture & left, VideoCapture & right);
 };
 

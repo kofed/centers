@@ -24,9 +24,10 @@ void Contour3d::toYml(FileStorage & yml) const{
 
 void Contour3d::draw(Mat & drawing) const{
 	for(auto p : points){
-		if(p.z > 1000 || p.z < 0){
+		if(p.z > 5000 || p.z < 0){
 			throw runtime_error("heigh is incorrect");
 		}
-		circle(drawing, Point2f(p.x, p.y), 1, Scalar( 255*( 1 - p.z/150), 255*( 1 - p.z/150), 255 * p.z/150));
+		Scalar color( 255 * p.z/1700, 100, 255*( 1 - p.z/1700) );
+		circle(drawing, Point2f(p.x, p.y), 1, color);
 	}
 }

@@ -47,6 +47,8 @@ private:
 	Point3i nearest(const Point2f & left, const float disparity);
 
 	Point3i nearest(const Point3f & pointWithDisparity);
+
+	friend class Tests;
 };
 
 #endif

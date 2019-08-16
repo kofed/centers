@@ -100,7 +100,9 @@ Point3i Height::nearest(const Point2f & left, const float disparity){
 	}
 	auto itLow = disparity2corner.lower_bound(disparity);
 	if(itLow == disparity2corner.end()){
+		itLow = disparity2corner.end() ;
 		--itLow;
+		//return Point3i(itLow->second.x, itLow->second.y, 1000000.0f);
 	}
 	return itLow->second;
 }

@@ -11,7 +11,13 @@ public:
 private:
 	void disparityTest();
 
-	void heightTest();
+	void heightTest(string folder, string fileL, string fileR);
+
+	void chessBoardRTreeTest();
+
+	void getDisparityFromChessBoard();
+
+	void split();
 };
 
 #endif

@@ -18,27 +18,30 @@ Log::Log(){
 	buildLogFolder();
 }
 
-void Log::logStart(int level, const char* method){
+void Log::start(const char* method){
 	methodStart = system_clock::now();
 	
-	setFolder(level, method);
+	folders.push_back(string(method));
+	buildLogFolder();
+	//setFolder(level, method);
 	if(debug){
 		cout << method << " started\n";
 	}
 }
 
-void Log::logFinish(int level,const char* method){
+void Log::finish(const char* method){
 	auto end = std::chrono::system_clock::now();
 	duration<double> diff = end-methodStart;
 	durations[string(method)] += diff;
 	
-		setFolder(level, "");
+	folders.pop_back();
+	//	setFolder(level, "");
 	if(debug){
 		cout << method << " finished\n";
 	}
 }
 
-void Log::writeImage(const char* name, Mat & mat){
+void Log::write(const char* name, Mat & mat){
 	if(!debug){
 			return;
 		}
@@ -53,7 +56,7 @@ void Log::writeImage(const char* name, Mat & mat){
 		cout << " writeImage " << ss.str() << endl;
 }
 
-void Log::writeImage(int name, Mat & mat){
+void Log::write(int name, Mat & mat){
 	if(!debug){
 		return;
 	}
@@ -69,7 +72,7 @@ void Log::writeImage(int name, Mat & mat){
 	cout << " writeImage " << ss.str() << endl;
 }
 
-void Log::showImage(Mat & image){
+void Log::show(Mat & image){
 	namedWindow("image", WINDOW_AUTOSIZE);
 	imshow("image", image);
 	waitKey(0);
@@ -141,7 +144,7 @@ FileStorage* Log::openYmlWrite(const string name){
 
 FileStorage* Log::openYmlWrite(const int name){
 	stringstream ss;
-	ss << name;
+	ss << name << ".json";
 	return openYmlWrite(ss.str().c_str());
 
 }

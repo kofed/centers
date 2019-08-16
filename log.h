@@ -16,9 +16,15 @@ public:
 	
 	Log();
 			
-	void logStart(int level, const char * method);
+	/**
+	 * Старт метода
+	 */
+	void start(const char * method);
 
-	void logFinish(int level, const char * method);
+	/**
+	 * Финиш метода
+	 */
+	void finish(const char * method);
 
 	duration<double> & getDuration(const char* method);
 	
@@ -28,9 +34,9 @@ public:
 	
 	void setFolder(int level, int outFolder);
 		
-	void writeImage(int name, Mat & mat);
+	void write(int name, Mat & mat);
 	
-	void writeImage(const char * name, Mat & mat);
+	void write(const char * name, Mat & mat);
 	
 	ofstream* openTxt(const char * name);
 	
@@ -53,7 +59,7 @@ private:
 	
 	map<string, duration<double>> durations;
 	
-	void showImage(Mat & image);
+	void show(Mat & image);
     
     	string logFolder;
     

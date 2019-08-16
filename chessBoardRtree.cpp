@@ -51,3 +51,35 @@ float ChessBoardRtree::getValue(const Point2f p) const{
 		rtree.query(bgi::nearest(point(p.x, p.y), 1), std::back_inserter(result));
 		return result.at(0).second;
 }
+
+void operator>>(const FileNode & fn, ChessBoardRtree & cb){
+
+	}
+FileStorage & operator<<(FileStorage & fs, const point & p);
+FileStorage & operator<<(FileStorage & fs, const point & p){
+	fs << "{";
+	fs << "x" << p.get<0>();
+	fs << "y" << p.get<1>();
+	fs << "}";
+	return fs;
+}
+
+FileStorage & operator<<( FileStorage & fs, const ChessBoardRtree & cb){
+	fs << "boxes" << "[";
+	for(auto val = cb.rtree.begin(); val != cb.rtree.end(); ++val){
+		fs <<  "{";
+	//	//toTxt(fs, val->first.min_corner);
+		fs << "min_point" << val->first.min_corner();
+		fs << "max_point" << val->first.max_corner();
+		float s = val->second;
+		fs << "disparity" << s;// ;
+		fs << "}";
+	}
+	fs << "]";
+
+	    return fs;
+}
+
+
+
+

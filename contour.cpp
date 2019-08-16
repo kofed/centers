@@ -3,15 +3,16 @@
 #include "opencv2/opencv.hpp"
 #include "contour3d.h"
 #include "log.h"
+#include <stdlib.h>
 
 Contour::Contour(vector<CPoint> & _points):points(_points){
 	init();
 }
 
-Contour::Contour(vector<Point> & _points){
-	points = point2CPoint(_points);
-	init();
-}
+//Contour::Contour(vector<Point> & _points){
+//	points = point2CPoint(_points);
+//	init();
+//}
 
 void Contour::init(){
 	if(points.size() < 5){
@@ -43,12 +44,20 @@ vector<CPoint> Contour::point2CPoint(const vector<Point> & points){
 	return cpoints;
 }
 
-int Contour::size(){
+int Contour::size() const{
 	return points.size();
 }
 
 bool Contour::equals(const Contour & ref) const{
 	return abs(center.x - ref.center.x) + abs(center.y - ref.center.y) < 10;
+}
+
+void Contour::toYml() const{
+	Log::LOG->start("contour");
+	auto yml = Log::LOG->openYmlWrite(name() + ".yml");
+	toYml(*yml);
+	Log::LOG->releaseAndDelete(yml);
+	Log::LOG->finish("contour");
 }
 
 void Contour::toYml(FileStorage & yml) const{
@@ -68,6 +77,10 @@ float Contour::tg(const CPoint point) const {
 	return ((float)(point.y - center.y))/((float)(point.x - center.x));
 }
 
+float Contour::pointHash(const CPoint point) const{
+	return angle(point);
+}
+
 float Contour::angle(const CPoint point)const{
 	double dy = static_cast<double>(point.y - center.y);
 	double dx = static_cast<double>(point.x - center.x);
@@ -76,6 +89,13 @@ float Contour::angle(const CPoint point)const{
 
 }
 
+int Contour::dy(const CPoint point) const{
+	return point.y - center.y;
+}
+
+int Contour::dx(const CPoint point) const{
+	return point.x - center.x;
+}
 
 Contour Contour::diviate(const int dx, const int dy) const{
 	vector<CPoint> diviated;
@@ -93,3 +113,16 @@ map<float, CPoint>::const_iterator Contour::upperBound(const float hash) const{
 map<float, CPoint>::const_iterator Contour::lowerBound(const float hash) const{
 	return anglePointMap.lower_bound(hash);
 }
+
+void Contour::draw(Mat & drawing){
+	int size = points.size();
+	polylines(drawing, points, true, color);
+	putText(drawing, name(), center, FONT_HERSHEY_SIMPLEX, 0.4, color, 1, CV_AA);
+}
+
+string Contour::name() const {
+	stringstream ss;
+	ss << "(" << center.x << "," << center.y << ")";
+	return ss.str();
+}
+
