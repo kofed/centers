@@ -12,6 +12,9 @@ class Contour3d;
 
 typedef Point2i CPoint;
 
+/**
+ * контур
+ */
 class Contour{
 private:
 	vector<CPoint> points;
@@ -21,14 +24,10 @@ private:
 	float tg(const CPoint point) const;
 	
 	float angle(const CPoint point) const;
-	
-
 
 	CPoint getPoint(const float angle) const;
 
 	void init();
-
-
 
 public:
 	CPoint center;

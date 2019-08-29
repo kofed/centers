@@ -5,20 +5,27 @@
 #include "contour3d.h"
 #include "opencv2/opencv.hpp"
 #include <vector>
+#include "fframe.h"
 
 using namespace cv;
 
+/**
+ * контуры найденные в промежутки интенсивности с третьей координатой
+ */
 class Contours3d{
 private:
 	vector<Contour3d> vContours;
 
 	int minIntencity;
 public:
- 	Contours3d(const Contours & contours2d, const int h);
+	//ссылк на фрейм
+	const FFrame & frame;
 
-	Contours3d(const vector<Contour3d> & _vContours, const int _minIntencity);
+ 	Contours3d(const FFrame & frame, const Contours & contours2d, const int h);
 
-	Contours3d(const vector<Contour3d> & _vContours);
+	Contours3d(const FFrame & frame, const vector<Contour3d> & _vContours, const int _minIntencity = 0);
+
+	Contours3d(const FFrame & frame, const vector<Contour3d> & _vContours);
 
 	void toYml() const;
 
@@ -26,6 +33,7 @@ public:
 
 	inline int getMinIntencity() const {return minIntencity;}
 
+	//нарисовать
 	void draw(Mat & drawing) const;
 
 };

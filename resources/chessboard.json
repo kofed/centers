@@ -1,4 +1,5 @@
 {
+    "resolution": [ 1280, 1024 ],
     "surfaces": [
         { "h": 100, "cellSize": 40, "leftPx": {
                 "corners": [

@@ -19,6 +19,9 @@ typedef bgi::rtree<value, bgi::quadratic<4>> Rtree;
 typedef std::pair<box, Point2i> IndexValue;
 typedef bgi::rtree<IndexValue, bgi::quadratic<4>> IndexRtree;
 
+/**
+ * шахматная доска  с деревом
+ */
 class ChessBoardRtree : public ChessBoard{
 private:
 	Rtree rtree;

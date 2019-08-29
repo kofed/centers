@@ -37,7 +37,7 @@ vector<Contours> & FFrame::findContours(){
 			inRange(blurred, INTENCITY_STEP*i, MAX_INTENCITY, m);
 			Log::LOG->write(INTENCITY_STEP*i, m);
 			splittedContours.push_back(
-					Contours(m, INTENCITY_STEP*i, prevContours));
+					Contours(*this, m, INTENCITY_STEP*i, prevContours));
 			prevContours = &(splittedContours.at(i));
 		}
 

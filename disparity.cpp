@@ -35,7 +35,7 @@ Contours3d Disparity::disparity(const Contours & contoursL, const Contours & con
 		Log::LOG->write(contoursR.getIntencity(), right);
 		Log::LOG->finish("right");
 		Log::LOG->finish("disparity");
-		return Contours3d(disparities, contoursL.getIntencity());
+		return Contours3d(contoursL.frame, disparities, contoursL.getIntencity());
 }
 
 Contour3d Disparity::disparity(const Contour & _left, const Contour & _right){

@@ -2,15 +2,15 @@
 #include "contours3d.h"
 #include "log.h"
 
-Contours::Contours(const list<Contour> & _lContours, const int _intencity)
-	:lContours(_lContours), intencity(_intencity){
+Contours::Contours(const FFrame & _frame, const Mat _image, const list<Contour> & _lContours, const int _intencity)
+	:frame(_frame), image(_image), lContours(_lContours), intencity(_intencity){
 
 }
 
-Contours::Contours(const Mat & _image, const int _intencity, const Contours* refContours)
-		:image(_image), intencity(_intencity){
+Contours::Contours(const FFrame & _frame, const Mat _image, const int _intencity, const Contours* refContours)
+		:frame(_frame), image(_image), intencity(_intencity){
 	Log::LOG->start("contours");
-	findContours( image, vContours, hierarchy, CV_RETR_LIST, CV_CHAIN_APPROX_NONE );
+	findContours( _image, vContours, hierarchy, CV_RETR_LIST, CV_CHAIN_APPROX_NONE );
 
 	for(auto vPoint : vContours){
 		if(vPoint.size() < MIN_CONTOUR_SIZE){
@@ -28,7 +28,7 @@ Contours::Contours(const Mat & _image, const int _intencity, const Contours* ref
 	}
 
 	if(Log::LOG->debug){
-		Mat drawing = Mat::zeros( image.size(), CV_8UC3 );
+		Mat drawing = Mat::zeros( frame.image.size(), CV_8UC3 );
 		draw(drawing);
 		Log::LOG->write(intencity, drawing);
 	}
@@ -54,7 +54,7 @@ Mat Contours::drawAsPolylines(Mat & drawing) const {
 }
 
 Mat Contours::drawAsPolylines()const{
-	Mat drawing = Mat::zeros(image.size(), CV_8UC3);
+	Mat drawing = Mat::zeros(frame.image.size(), CV_8UC3);
 	drawAsPolylines(drawing);
 	return drawing;
 }
@@ -82,8 +82,8 @@ void Contours::writeCentersToFile(){
 	ofstream* centersFile = Log::LOG->openTxt(intencity);
 
 	if(Log::LOG->debug){
-		Mat drawing = Mat::zeros( image.size(), CV_8UC3 );
-		cvtColor(image, drawing, COLOR_GRAY2BGR);
+		Mat drawing = Mat::zeros( frame.image.size(), CV_8UC3 );
+		cvtColor(frame.image, drawing, COLOR_GRAY2BGR);
 		for(Contour contour : lContours){
 			circle( drawing, contour.center, 4, Scalar(0, 0, 255), -1, 8, 0 );
 		}
@@ -161,7 +161,7 @@ Contours Contours::diviate(const int dx, const int dy) const{
 	for(auto contour : lContours){
 		divContours.push_back(contour.diviate(dx, dy));
 	}
-	return Contours(divContours, intencity);
+	return Contours(frame, image, divContours, intencity);
 }
 
 void Contours::toYml(){
@@ -175,14 +175,18 @@ void Contours::toYml(){
 void Contours::excludeBorderPoints(vector<Point> & points) const{
 	auto new_end = std::remove_if(points.begin(), points.end(),
 	                              [this](const Point& p)
-	                              { return p.x == 0 || p.y == 0 || p.x == image.cols - 1 || p.y == image.rows - 1; });
+	                              { return p.x == 0 || p.y == 0
+	                            		  || p.x == image.cols - 1
+										  || p.y == image.rows - 1; });
 
 	points.erase(new_end, points.end());
 }
 
 bool Contours::isBorderContour(const vector<Point> & points)const{
 	auto it = std::find_if (points.begin(), points.end(), [this](const Point& p)
-            { return p.x == 0 || p.y == 0 || p.x == image.cols - 1 || p.y == image.rows - 1; });
+            { return p.x == 0 || p.y == 0
+            		|| p.x == frame.image.cols - 1
+					|| p.y == frame.image.rows - 1; });
 	return it != points.end();
 }
 

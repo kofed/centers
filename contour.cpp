@@ -9,11 +9,6 @@ Contour::Contour(vector<CPoint> & _points):points(_points){
 	init();
 }
 
-//Contour::Contour(vector<Point> & _points){
-//	points = point2CPoint(_points);
-//	init();
-//}
-
 void Contour::init(){
 	if(points.size() < 5){
 		throw runtime_error("создание контура с колличеством точек < 5");

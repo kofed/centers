@@ -14,6 +14,11 @@ Contour3d::Contour3d(const vector<CPoint3> & _points)
 
 }
 
+Contour3d::Contour3d(const vector<CPoint3> & _points, const Point2i & _resolution)
+	:points(_points), resolution(_resolution){
+
+}
+
 void Contour3d::toYml(FileStorage & yml) const{
 	yml << "contour" << "[";
 	for(auto p : points){

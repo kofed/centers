@@ -55,11 +55,13 @@ void Processor::height(Mat & left,  Mat & right){
 	for(auto c : disparities){
 		left3dSm.push_back(height.to3dSm(c));
 
-		height.to3dPx(c).draw(drawing);
+		auto c3dPx = height.to3dPx(c);
+		c3dPx.draw(drawing);
+		c3dPx.toYml();
 	}
-	for(auto c : left3dSm){
-		c.toYml();
-	}
+	//for(auto c : left3dSm){
+	//	c.toYml();
+	//}
 
 	Log::LOG->write("contours", drawing);
 	Log::LOG->finish("height");
@@ -119,7 +121,7 @@ void Processor::process( Mat & image){
 				int h;
 				(*hYml)[contours.getYmlName()] >> h;
 					
-				Contours3d contours3d(contours, h);
+				Contours3d contours3d(frame, contours, h);
 				contours3d.toYml();
 			}
 			hYml->release();

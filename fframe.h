@@ -12,21 +12,27 @@ using namespace cv;
 using namespace std;
 using namespace chrono;
 
+class Contours;
+
+/**
+ * кадр
+ */
 class FFrame
 {
 	
 private:
-	Mat image;
-	
+	//контуры разделенные по интенсивностям
 	vector<Contours> splittedContours;
 
     vector<Point> joinDots(vector<vector<Point>> dots);
 
     void check(const Mat & image);    
 
-    void drawCircles(Mat & background, vector<vector<Point> > & contours, int iSplitted);
+    //void drawCircles(Mat & background, vector<vector<Point> > & contours, int iSplitted);
 
 public:
+    Mat image;
+
     FFrame(const Mat & _image);
 
     FFrame(const string imageFile);

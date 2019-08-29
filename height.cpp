@@ -9,20 +9,21 @@ Height::Height(){
 		height2chessBoardSm[surface->getHeight()] = surface->getLeftSm();
 	}
 	
+	resolution = calibData.resolution;
 }
 
 Contours3d Height::to3dSm(const Contours3d disparity){
 	vector<Contour3d> c3dSm;
 	for(auto c : disparity.getLContours()){
-		c3dSm.push_back(to3dSm(c));
+		c3dSm.push_back(to3dSm(c, disparity.frame.image.size()));
 	}
-	return Contours3d(c3dSm, disparity.getMinIntencity());
+	return Contours3d(disparity.frame, c3dSm, disparity.getMinIntencity());
 }
 
-Contour3d Height::to3dSm(const Contour3d contour){
+Contour3d Height::to3dSm(const Contour3d contour, const Size & contourResolution){
 	vector<Point3f> pointsSm;
 	for(auto p : contour.getPoints()){
-		pointsSm.push_back(to3dSm(p));
+		pointsSm.push_back(to3dSm(p, contourResolution));
 	}
 	return Contour3d(pointsSm);
 }
@@ -30,15 +31,19 @@ Contour3d Height::to3dSm(const Contour3d contour){
 /**
  * Точка с disparity транслируется в точку с высотой
  */
-Point3f Height::to3dSm(const Point3f point){
+Point3f Height::to3dSm(const Point3f point, const Size & contourResolution){
+	Point3f _point = Point3f(resolution.x * point.x/contourResolution.width,
+					resolution.y * point.y/contourResolution.height,
+					resolution.x * point.z/contourResolution.width);
+
 	//x, y - index, z - height
-	Point3i nearestCornerIdx = nearest(point);
+	Point3i nearestCornerIdx = nearest(_point);
 	Point2f nearestCornerPx = getCornerPx(nearestCornerIdx);
 	Point2f nearestCornerSm = getCornerSm(nearestCornerIdx);
 
 
-	float xSm = nearestCornerSm.x + (nearestCornerPx.x - point.x)*px2smX(nearestCornerIdx);
-	float ySm = nearestCornerSm.y + (nearestCornerPx.y - point.y)*px2smY(nearestCornerIdx);
+	float xSm = nearestCornerSm.x + (nearestCornerPx.x - _point.x)*px2smX(nearestCornerIdx);
+	float ySm = nearestCornerSm.y + (nearestCornerPx.y - _point.y)*px2smY(nearestCornerIdx);
 
 	return Point3f(xSm, ySm, nearestCornerIdx.z);
 }
@@ -46,21 +51,26 @@ Point3f Height::to3dSm(const Point3f point){
 Contours3d Height::to3dPx(const Contours3d disparity){
 	vector<Contour3d> c3dPx;
 	for(auto c : disparity.getLContours()){
-		c3dPx.push_back(to3dPx(c));
+		c3dPx.push_back(to3dPx(c, disparity.frame.image.size()));
 	}
-	return Contours3d(c3dPx, disparity.getMinIntencity());
+	return Contours3d(disparity.frame, c3dPx, disparity.getMinIntencity());
 }
 
-Contour3d Height::to3dPx(const Contour3d contour){
+Contour3d Height::to3dPx(const Contour3d contour, const Size & contourResolution){
 	vector<Point3f> pointsPx;
 	for(auto p : contour.getPoints()){
-		pointsPx.push_back(to3dPx(p));
+
+
+		pointsPx.push_back(to3dPx(p, contourResolution));
 	}
 	return Contour3d(pointsPx);
 }
 
-Point3f Height::to3dPx(const Point3f point){
-	Point3i nearestCornerIdx = nearest(point);
+Point3f Height::to3dPx(const Point3f point, const Size & contourResolution){
+	Point3f _p = Point3f(resolution.x * point.x/contourResolution.width, resolution.y * point.y/contourResolution.height,
+			resolution.x * point.z/contourResolution.width);
+
+	Point3i nearestCornerIdx = nearest(_p);
 	return Point3f(point.x, point.y, nearestCornerIdx.z);
 }
 
@@ -72,7 +82,7 @@ Point2f Height::getCornerPx(Point3i index){
 	ChessBoard * cb = height2chessBoardPx[index.z];
 	return cb->get(index.x, index.y);
 }
-
+/*
 float Height::heightSm(const Point2f & left, const float disparity){
 	map<float, float> disparity2height;
 	for( auto const& [height, cb] : height2chessBoardPx){
@@ -84,7 +94,7 @@ float Height::heightSm(const Point2f & left, const float disparity){
 	}
 	return itLow->second;
 }
-
+*/
 /**
  * x, y- index
  * z - height
@@ -110,7 +120,7 @@ Point3i Height::nearest(const Point2f & left, const float disparity){
 Point3i Height::nearest(const Point3f & pointWithDisparity){
 	return nearest(Point2f(pointWithDisparity.x, pointWithDisparity.y), pointWithDisparity.z);
 }
-
+/*
 Point3f Height::approximate(const Point3f point, const vector<Point3f> & bp) const{
 	if(bp.size() != 4){
 		throw std::runtime_error("Approximation should base on 4 points");
@@ -129,7 +139,7 @@ Point3f Height::approximate(const Point3f point, const vector<Point3f> & bp) con
 	return Point3f(momentumX/sum, momentumY/sum, point.z);
 
 }
-
+*/
 /**
  * переведем пиксели в сантиметры в конкретной точке
  * Параметр: индексс шахматной доски
